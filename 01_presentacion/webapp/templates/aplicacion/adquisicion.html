@@ -1,0 +1,64 @@
+{% extends "general/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Señal - SOLID{% endblock %}
+
+{% block page_content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                 <h3><p class="text-center">Adquisición de la Señal</p></h3>
+            </div>
+            <div class="panel-body">
+
+                <form action = {{ url_for("adquisicion") }} method="POST" >
+                    <div class="form-group">
+                        <p>  {{ form.csrf_token }} </p>
+                        <p>{{ form.identificador.label }} </p>
+                        <p>{{ form.identificador(class="form-control") }}</p>
+                    </div>
+                    <div class="form-group">
+                        <p>{{ form.descripcion.label }} </p>
+                        <p>{{form.descripcion(class="form-control") }}</p>
+                    </div>
+                    <div class="form-group">
+                        <p>{{ form.fecha.label }} </p>
+                        <p>{{ form.fecha(class="form-control") }}</p>
+                    </div>
+                    <div>
+                        <p align="center">{{ form.adquirir(class="btn btn-primary") }} </p>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                 <h3><p class="text-center">Lista de Señales Adquiridas</p></h3>
+            </div>
+            <h3 align="center"><span class="label label-default">Idenficadores</span></h3>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <table class="table table-bordered">
+                        {% if seniales != [] %}
+                            {% for valor in seniales %}
+                            <tr>
+                                <td align="center">{{ valor }} </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td align="center">Sin datos</td>
+                            </tr>
+                        {% endif %}
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

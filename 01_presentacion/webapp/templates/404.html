@@ -1,0 +1,16 @@
+{% extends "general/base.html" %}
+
+{% block title %}Flasky - Page Not Found{% endblock %}
+
+{% block page_content %}
+<div class="panel panel-default">
+    <div class="panel-body">
+        <p align="center">
+            <img src="{{ url_for('static', filename = 'pagina_no_enontrada.png') }}" class="img-responsive">
+        </p>
+        <h3 align="center">
+            <span class="label label-warning">Página no econtrada</span>
+        </h3>
+    </div>
+</div>
+{% endblock %}
