@@ -1,0 +1,37 @@
+# Development Dependencies - SenialSOLIDApp
+# Install with: pip install -r requirements-dev.txt
+
+# Include production dependencies
+-r requirements.txt
+
+# Testing Framework
+pytest>=7.4.0
+pytest-cov>=4.1.0
+pytest-mock>=3.11.0
+pytest-flask>=1.2.0
+coverage>=7.3.0
+
+# Code Quality Tools
+black>=23.7.0
+isort>=5.12.0
+flake8>=6.0.0
+mypy>=1.5.0
+
+# Security Tools
+bandit>=1.7.5
+safety>=2.3.0
+
+# Git Hooks
+pre-commit>=3.3.0
+
+# Documentation (Optional)
+sphinx>=7.1.0
+sphinx-rtd-theme>=1.3.0
+myst-parser>=2.0.0
+
+# Development Tools
+ipython>=8.14.0
+jupyter>=1.0.0
+
+# Note: For modern environments, use: pip install -e .[dev]
+# This file is maintained for compatibility with older tools
