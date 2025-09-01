@@ -1,7 +1,8 @@
 from flask import Flask, render_template, redirect, url_for, flash, session
-from flask.ext.bootstrap import Bootstrap
-from flask.ext.wtf import Form
-from wtforms import TextField, IntegerField, DateField, SubmitField, validators
+from flask_bootstrap import Bootstrap
+from flask_wtf import FlaskForm
+from wtforms import StringField, IntegerField, DateField, SubmitField, validators
+import datetime
 import adquisicion
 import procesamiento
 import modelo
@@ -10,7 +11,7 @@ import utilidades
 from contenedor.configurador import *
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = "Victor"
+app.config['SECRET_KEY'] = "dev-key-change-in-production"  # Should use environment variable
 bootstrap = Bootstrap(app)
 
 
@@ -64,11 +65,11 @@ def componentes():
     return render_template('/aplicacion/componentes.html', lista=lista_tipos_componentes)
 
 
-class SenialForm(Form):
+class SenialForm(FlaskForm):
     identificador = IntegerField('Identificador', [validators.DataRequired(),
                                                    validators.NumberRange(min=1, max=9999,
                                                                           message='Fuera de Rango')])
-    descripcion = TextField('Descripcion', [validators.DataRequired()])
+    descripcion = StringField('Descripcion', [validators.DataRequired()])
     fecha = DateField('Fecha Adquiscion', [validators.DataRequired()],
                       format='%d-%m-%Y', default=datetime.date.today())
 

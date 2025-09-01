@@ -1,3 +1,3 @@
 
-from consola.presentacion_consola import AplicacionSOLID
+from presentacion_consola import AplicacionSOLID
 AplicacionSOLID.iniciar()

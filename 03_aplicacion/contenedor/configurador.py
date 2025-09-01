@@ -11,7 +11,7 @@ from acceso_datos.factory_context import *
 
 def obtener_dir_datos():
     try:
-        conf = minidom.parse("/Users/victor/PycharmProjects/DDD/configuracion.xml")
+        conf = minidom.parse("03_aplicacion/datos/configuracion.xml")
         dir_datos = conf.getElementsByTagName("dir_recurso_datos")[0]
         return dir_datos.firstChild.data
     except IOError as ex:
@@ -21,7 +21,7 @@ def obtener_dir_datos():
 def obtener_senial_config(senial_config):
     try:
         # Parsea el xml de configuracion
-        conf_procesador = minidom.parse("/Users/victor/PycharmProjects/DDD/configuracion.xml")
+        conf_procesador = minidom.parse("03_aplicacion/datos/configuracion.xml")
         # Busca el nodo de la senial para adquirir
         item_senial_adquirida = conf_procesador.getElementsByTagName(senial_config)[0]
         # Obtiene el nombre del tipo de senial
@@ -43,7 +43,7 @@ def obtener_fltros_config(filtro_config):
     """
     try:
         # Parsea el xml de configuracion
-        conf_filtro = minidom.parse("/Users/victor/PycharmProjects/DDD/configuracion.xml")
+        conf_filtro = minidom.parse("03_aplicacion/datos/configuracion.xml")
         # Busca el nodo del procesador
         item_filtro = conf_filtro.getElementsByTagName(filtro_config)[0]
         # Obtiene el nombre del tipo de procesador definido
@@ -115,7 +115,7 @@ def definir_contexto(recurso):
     """
     try:
         # Parsea el xml de configuracion
-        conf_adquisidor = minidom.parse("/Users/victor/PycharmProjects/DDD/configuracion.xml")
+        conf_adquisidor = minidom.parse("03_aplicacion/datos/configuracion.xml")
         # Busca el nodo del contexto
         item_contexto = conf_adquisidor.getElementsByTagName("contexto")[0]
         contexto = item_contexto.firstChild.data.strip()

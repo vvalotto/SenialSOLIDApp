@@ -1,17 +1,18 @@
 from flask import Flask, render_template, session, redirect, url_for, flash
-from flask.ext.bootstrap import Bootstrap
-from flask.ext.moment import Moment
-from flask.ext.wtf import Form
-from flask.ext.sqlalchemy import SQLAlchemy
+from flask_bootstrap import Bootstrap
+from flask_moment import Moment  
+from flask_wtf import FlaskForm
+from flask_sqlalchemy import SQLAlchemy
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
+from decouple import config
 import os
 
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = "Victor"
+app.config['SECRET_KEY'] = config('SECRET_KEY', default='dev-key-change-in-production')
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 
@@ -30,7 +31,7 @@ def internal_server_error(e):
     return render_template('500.html'), 500
 
 
-class NameForm(Form):
+class NameForm(FlaskForm):
     name = StringField('What is your name?', validators=[DataRequired()])
     submit = SubmitField('Submi')
 
