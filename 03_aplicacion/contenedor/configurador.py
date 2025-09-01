@@ -1,6 +1,7 @@
 """
 Configura la clase que se usara
 """
+import os
 from xml.dom import minidom
 from modelo.factory_senial import *
 from procesamiento.factory_procesador import *
@@ -9,11 +10,41 @@ from repositorios.repositorio import *
 from acceso_datos.factory_context import *
 
 
+def _obtener_ruta_config():
+    """Obtiene la ruta absoluta al archivo de configuración"""
+    # Obtener directorio actual del script
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    # Subir dos niveles para llegar a la raíz del proyecto
+    project_root = os.path.dirname(os.path.dirname(current_dir))
+    # Construir path al archivo de configuración
+    config_path = os.path.join(project_root, "03_aplicacion", "datos", "configuracion.xml")
+    
+    # Si no existe, buscar desde el directorio actual
+    if not os.path.exists(config_path):
+        config_path = "03_aplicacion/datos/configuracion.xml"
+        if not os.path.exists(config_path):
+            # Último intento: buscar en el directorio donde está este archivo
+            config_path = os.path.join(os.path.dirname(__file__), "..", "datos", "configuracion.xml")
+            config_path = os.path.normpath(config_path)
+    
+    return config_path
+
+
 def obtener_dir_datos():
     try:
-        conf = minidom.parse("03_aplicacion/datos/configuracion.xml")
+        config_path = _obtener_ruta_config()
+        conf = minidom.parse(config_path)
         dir_datos = conf.getElementsByTagName("dir_recurso_datos")[0]
-        return dir_datos.firstChild.data
+        path_datos = dir_datos.firstChild.data
+        
+        # Si es path relativo, hacerlo absoluto desde la raíz del proyecto
+        if not os.path.isabs(path_datos):
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            project_root = os.path.dirname(os.path.dirname(current_dir))
+            path_datos = os.path.join(project_root, path_datos)
+            path_datos = os.path.normpath(path_datos)
+        
+        return path_datos
     except IOError as ex:
         raise ex
 
@@ -21,7 +52,8 @@ def obtener_dir_datos():
 def obtener_senial_config(senial_config):
     try:
         # Parsea el xml de configuracion
-        conf_procesador = minidom.parse("03_aplicacion/datos/configuracion.xml")
+        config_path = _obtener_ruta_config()
+        conf_procesador = minidom.parse(config_path)
         # Busca el nodo de la senial para adquirir
         item_senial_adquirida = conf_procesador.getElementsByTagName(senial_config)[0]
         # Obtiene el nombre del tipo de senial
@@ -43,7 +75,8 @@ def obtener_fltros_config(filtro_config):
     """
     try:
         # Parsea el xml de configuracion
-        conf_filtro = minidom.parse("03_aplicacion/datos/configuracion.xml")
+        config_path = _obtener_ruta_config()
+        conf_filtro = minidom.parse(config_path)
         # Busca el nodo del procesador
         item_filtro = conf_filtro.getElementsByTagName(filtro_config)[0]
         # Obtiene el nombre del tipo de procesador definido
@@ -115,7 +148,8 @@ def definir_contexto(recurso):
     """
     try:
         # Parsea el xml de configuracion
-        conf_adquisidor = minidom.parse("03_aplicacion/datos/configuracion.xml")
+        config_path = _obtener_ruta_config()
+        conf_adquisidor = minidom.parse(config_path)
         # Busca el nodo del contexto
         item_contexto = conf_adquisidor.getElementsByTagName("contexto")[0]
         contexto = item_contexto.firstChild.data.strip()
