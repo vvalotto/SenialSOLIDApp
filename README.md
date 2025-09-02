@@ -22,10 +22,10 @@ This project is currently undergoing **comprehensive modernization** to update f
 | Component | Current | Target | Status |
 |-----------|---------|--------|---------| 
 | **Python Version** | ✅ **3.11 LTS** | ✅ 3.11 LTS | ✅ **COMPLETED** |
+| **Dependencies** | ✅ **Modern Management** | ✅ pyproject.toml + one-command setup | ✅ **COMPLETED** |
 | **Security** | Critical vulnerabilities | Zero critical | 🔄 In Progress |  
 | **Testing** | 0% coverage | 80%+ coverage | 📋 Planned |
 | **CI/CD** | Manual | Automated | 📋 Planned |
-| **Dependencies** | Manual | Modern management | 🚀 Ready to Start |
 
 ### 🎉 **MILESTONE: SSA-6 COMPLETED** - v1.1.0
 **Current Sprint:** [Sprint 1 - Infrastructure & Security](https://vvalotto.atlassian.net/wiki/spaces/~62acd5154639000068d60d4a/pages/147685404/) - **38% COMPLETED**  
@@ -75,23 +75,51 @@ This project is currently undergoing **comprehensive modernization** to update f
 
 ## 🛠️ **Development Setup** ✅ **MODERNIZED**
 
-### Current Modern Setup (Python 3.11 LTS)
+### 🚀 One-Command Setup (Recommended)
 
 ```bash
-# Modern setup (✅ COMPLETED in SSA-6)
+# Clone repository
 git clone https://github.com/vvalotto/SenialSOLIDApp.git
 cd SenialSOLIDApp
 
-# Create virtual environment with Python 3.11+
-python3.11 -m venv venv
-source venv/bin/activate  # Linux/Mac
-# venv\Scripts\activate   # Windows
+# One-command setup for development
+python scripts/setup.py --dev
 
-# Install dependencies (modern management ready)
+# Activate environment 
+source activate.sh    # Linux/Mac
+activate.bat          # Windows
+
+# Ready to develop!
+```
+
+### 🎯 Quick Start Options
+
+```bash
+# Production setup only
+python scripts/setup.py
+
+# Development setup with all tools
+python scripts/setup.py --dev
+
+# Force recreation of environment
+python scripts/setup.py --dev --force
+
+# Use specific Python version
+python scripts/setup.py --dev --python-version 3.12
+```
+
+### 📦 Modern Package Management
+
+```bash
+# Install using pyproject.toml (preferred)
+pip install -e .              # Production dependencies
+pip install -e .[dev]         # With development tools
+pip install -e .[test]        # With testing tools only
+pip install -e .[docs]        # With documentation tools
+
+# Fallback: Traditional requirements files
 pip install -r requirements.txt
 pip install -r requirements-dev.txt  # For development
-
-# Ready for development!
 ```
 
 ### Prerequisites ✅ **ACHIEVED**
@@ -99,7 +127,8 @@ pip install -r requirements-dev.txt  # For development
 - **✅ Python 3.11+** (LTS version) - **COMPLETED**
 - **✅ Git** for version control - Available
 - **✅ Virtual Environment** (venv/conda) - Ready
-- **✅ Modern packaging** (pyproject.toml) - Implemented
+- **✅ Modern packaging** (pyproject.toml) - **IMPLEMENTED** ✨
+- **✅ One-command setup** (scripts/setup.py) - **NEW** ✨
 
 ---
 
@@ -148,10 +177,10 @@ python views.py
 **Project Key:** SSA  
 **Active Board:** [SenialSOLID Modernization](https://vvalotto.atlassian.net/jira/software/projects/SSA/boards/73)
 
-#### ✅ Sprint 1 Status - **38% COMPLETED**:
+#### ✅ Sprint 1 Status - **63% COMPLETED**:
 - ✅ [SSA-6](https://vvalotto.atlassian.net/browse/SSA-6): Python 3.11 Migration - **COMPLETED** 🎉
+- ✅ [SSA-8](https://vvalotto.atlassian.net/browse/SSA-8): Dependencies Management - **COMPLETED** 🎉
 - 🚀 [SSA-7](https://vvalotto.atlassian.net/browse/SSA-7): Security Vulnerabilities Fix - **Ready to Start**  
-- 🚀 [SSA-8](https://vvalotto.atlassian.net/browse/SSA-8): Dependencies Management - **Ready to Start (Unblocked)**
 - 🚫 [SSA-9](https://vvalotto.atlassian.net/browse/SSA-9): Configuration Externalization - **Blocked by SSA-7**
 
 ### Confluence Documentation
@@ -277,10 +306,10 @@ Students can learn:
 
 ## 📈 **Roadmap** ✅ **UPDATED WITH REAL PROGRESS**
 
-### ✅ Sprint 1: Infrastructure & Security - **38% COMPLETED**
+### ✅ Sprint 1: Infrastructure & Security - **63% COMPLETED**
 - ✅ **Python 3.11 migration** - **COMPLETED** (SSA-6) 🎉
+- ✅ **Modern dependency management** - **COMPLETED** (SSA-8) 🎉
 - 🚀 **Security vulnerabilities resolution** - **Ready to Start** (SSA-7)
-- 🚀 **Modern dependency management** - **Ready to Start** (SSA-8) 
 - 🚫 **Configuration externalization** - **Blocked by SSA-7** (SSA-9)
 
 ### Sprint 2: Web Framework (Weeks 3-4) - **DEPENDENCY SATISFIED**
