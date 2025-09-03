@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <configuracion>
-    <dir_recurso_datos>/Users/voval/tmp/datos</dir_recurso_datos>
+    <dir_recurso_datos>datos/entrada/</dir_recurso_datos>
     <adquisidor>senoidal
-        <param id="dir_entrada_datos">/Users/voval/tmp/adquisidor/datos.txt</param>
+        <param id="dir_entrada_datos">datos/entrada/datos.txt</param>
     </adquisidor>
     <procesador>umbral
         <param id="umbral">5</param>

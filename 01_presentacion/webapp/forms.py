@@ -4,7 +4,7 @@ from wtforms import Form, StringField, IntegerField, DateField, SubmitField, val
 import datetime
 
 
-class SenialForm(Form):
+class SenialForm(FlaskForm):
     identificador = IntegerField('Identificador', [validators.DataRequired(),
                                                    validators.NumberRange(min=1, max=9999,
                                                                           message='Fuera de Rango')])

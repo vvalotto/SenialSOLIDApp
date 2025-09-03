@@ -21,7 +21,6 @@ app = Flask(__name__)
 app.config.from_object(config[config_name])
 # SECURITY: Initialize and validate configuration
 config[config_name].init_app(app)
-
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 db = SQLAlchemy(app)
