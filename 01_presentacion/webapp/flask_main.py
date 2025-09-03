@@ -6,18 +6,24 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 import os
+from config import config
 
+# SECURITY FIX: Removed hardcoded SECRET_KEY "Victor" 
+# Now using secure configuration management
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
+# Get configuration environment (default: development)
+config_name = os.environ.get('FLASK_ENV', 'development')
+
 app = Flask(__name__)
-app.config['SECRET_KEY'] = "Victor"
+# SECURITY: Load configuration from secure config module
+app.config.from_object(config[config_name])
+# SECURITY: Initialize and validate configuration
+config[config_name].init_app(app)
+
 bootstrap = Bootstrap(app)
 moment = Moment(app)
-
-app.config['SQLALCHEMY_DATABASE_URI'] =\
-    'sqlite:///' + os.path.join(basedir, 'data.sqlite')
-app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 db = SQLAlchemy(app)
 
 @app.errorhandler(404)
@@ -68,4 +74,6 @@ class User(db.Model):
         return '<User %r>' % self.username
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # SECURITY: Debug mode now controlled by environment variable
+    debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
+    app.run(debug=debug_mode)

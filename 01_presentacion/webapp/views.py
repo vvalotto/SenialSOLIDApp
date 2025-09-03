@@ -2,9 +2,21 @@ from flask import Flask, render_template, flash, redirect, url_for
 from flask_bootstrap import Bootstrap
 from webapp.modelos  import *
 from webapp.forms import *
+from config import config
+import os
+
+# SECURITY FIX: Removed hardcoded SECRET_KEY "Victor" 
+# Now using secure configuration management
+
+# Get configuration environment (default: development)
+config_name = os.environ.get('FLASK_ENV', 'development')
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = "Victor"
+# SECURITY: Load configuration from secure config module
+app.config.from_object(config[config_name])
+# SECURITY: Initialize and validate configuration
+config[config_name].init_app(app)
+
 bootstrap = Bootstrap(app)
 panel_informes = PanelInformes()
 
