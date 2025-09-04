@@ -1,0 +1,40 @@
+# Configuración específica para entorno de producción
+# ====================================================
+
+app:
+  environment: production
+
+paths:
+  # En producción, usar variable de entorno o path por defecto
+  base_data_dir: ${PROD_DATA_DIR:-/var/lib/senial/data}
+
+processing:
+  threshold: ${PROD_THRESHOLD:-5}  # Valor optimizado para producción
+
+acquisition:
+  signal:
+    size: ${PROD_SIGNAL_SIZE:-20}  # Tamaño completo para producción
+
+# Configuraciones específicas de producción
+debug: false
+logging_level: "INFO"
+verbose_output: false
+
+# Configuraciones de producción
+production_settings:
+  auto_reload: false
+  mock_data: false
+  test_mode: false
+  monitoring_enabled: true
+  metrics_collection: true
+  
+# Configuraciones de seguridad
+security:
+  strict_validation: true
+  audit_logging: true
+  
+# Configuraciones de rendimiento
+performance:
+  cache_enabled: true
+  batch_processing: true
+  max_concurrent_processes: ${MAX_PROCESSES:-4}

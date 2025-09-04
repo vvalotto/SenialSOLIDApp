@@ -1,0 +1,129 @@
+# JSON Schema para validar la configuración de SenialSOLID
+# ========================================================
+
+type: object
+required:
+  - app
+  - paths
+  - acquisition
+  - processing
+  - storage
+
+properties:
+  app:
+    type: object
+    required: [name, version, environment]
+    properties:
+      name:
+        type: string
+        pattern: "^[A-Za-z][A-Za-z0-9_]*$"
+      version:
+        type: string
+        pattern: "^\\d+\\.\\d+(\\.\\d+)?$"
+      environment:
+        type: string
+        enum: [development, testing, production]
+        
+  paths:
+    type: object
+    required: [base_data_dir, input_subdir, acquisition_subdir, processing_subdir]
+    properties:
+      base_data_dir:
+        type: string
+        minLength: 1
+      input_subdir:
+        type: string
+        minLength: 1
+      acquisition_subdir:
+        type: string
+        minLength: 1
+      processing_subdir:
+        type: string
+        minLength: 1
+        
+  acquisition:
+    type: object
+    required: [type, input_file, signal]
+    properties:
+      type:
+        type: string
+        enum: [senoidal]
+      input_file:
+        type: string
+        minLength: 1
+      signal:
+        type: object
+        required: [type, size]
+        properties:
+          type:
+            type: string
+            enum: [pila]
+          size:
+            type: integer
+            minimum: 1
+            maximum: 1000
+            
+  processing:
+    type: object
+    required: [type, threshold, signal]
+    properties:
+      type:
+        type: string
+        enum: [umbral]
+      threshold:
+        type: integer
+        minimum: 1
+        maximum: 100
+      signal:
+        type: object
+        required: [type, size]
+        properties:
+          type:
+            type: string
+            enum: [pila]
+          size:
+            type: integer
+            minimum: 1
+            maximum: 1000
+            
+  storage:
+    type: object
+    required: [context_type]
+    properties:
+      context_type:
+        type: string
+        enum: [archivo]
+        
+  environments:
+    type: object
+    patternProperties:
+      "^(development|testing|production)$":
+        type: object
+        properties:
+          paths:
+            type: object
+            properties:
+              base_data_dir:
+                type: string
+          processing:
+            type: object
+            properties:
+              threshold:
+                type: integer
+                minimum: 1
+                maximum: 100
+          acquisition:
+            type: object
+            properties:
+              signal:
+                type: object
+                properties:
+                  size:
+                    type: integer
+                    minimum: 1
+                    maximum: 1000
+          debug:
+            type: boolean
+          logging_level:
+            type: string
+            enum: [DEBUG, INFO, WARNING, ERROR, CRITICAL]
