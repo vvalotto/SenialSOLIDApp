@@ -1,0 +1,54 @@
+# SenialSOLID Configuration (migrado desde XML)
+# ===============================================
+# Migrado automáticamente el 2025-09-04 10:36:29
+# Configuración principal del sistema con soporte para variables de entorno
+
+app:
+  name: SenialSOLID
+  version: '2.0'
+  environment: ${ENVIRONMENT:-development}
+paths:
+  base_data_dir: ${BASE_DATA_DIR:-datos/entrada/}
+  input_subdir: ${INPUT_SUBDIR:-datos}
+  acquisition_subdir: ${ACQ_SUBDIR:-adq}
+  processing_subdir: ${PROC_SUBDIR:-pro}
+acquisition:
+  type: ${ACQUISITION_TYPE:-senoidal}
+  input_file: ${INPUT_FILE:-datos.txt}
+  signal:
+    type: ${ACQ_SIGNAL_TYPE:-pila}
+    size: 20  # ${ACQ_SIGNAL_SIZE:-20}
+processing:
+  type: ${PROCESSING_TYPE:-umbral}
+  threshold: 5  # ${PROCESSING_THRESHOLD:-5}
+  signal:
+    type: ${PROC_SIGNAL_TYPE:-pila}
+    size: 20  # ${PROC_SIGNAL_SIZE:-20}
+storage:
+  context_type: ${STORAGE_CONTEXT:-archivo}
+environments:
+  development:
+    paths:
+      base_data_dir: datos/dev
+    processing:
+      threshold: 3
+    acquisition:
+      signal:
+        size: 10
+    debug: true
+  testing:
+    paths:
+      base_data_dir: datos/test
+    processing:
+      threshold: 10
+    debug: false
+  production:
+    paths:
+      base_data_dir: ${PROD_DATA_DIR:-datos/entrada/}
+    processing:
+      threshold: 5  # ${PROD_THRESHOLD:-5}
+    acquisition:
+      signal:
+        size: 20  # ${PROD_SIGNAL_SIZE:-20}
+    debug: false
+    logging_level: INFO

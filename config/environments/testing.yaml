@@ -1,0 +1,33 @@
+# Configuración específica para entorno de testing
+# =================================================
+
+app:
+  environment: testing
+
+paths:
+  base_data_dir: "datos/test"
+
+processing:
+  threshold: 10  # Umbral más alto para testing
+
+acquisition:
+  signal:
+    size: 15  # Tamaño intermedio para tests
+
+# Configuraciones específicas de testing
+debug: false
+logging_level: "WARNING"
+verbose_output: false
+
+# Configuración de testing
+test_settings:
+  auto_reload: false
+  mock_data: true
+  test_mode: true
+  cleanup_after_test: true
+  
+# Configuraciones para CI/CD
+ci_settings:
+  parallel_tests: true
+  coverage_threshold: 80
+  timeout: 300

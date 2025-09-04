@@ -1,0 +1,26 @@
+# Configuración específica para entorno de desarrollo
+# ===================================================
+
+app:
+  environment: development
+
+paths:
+  base_data_dir: "datos/dev"
+
+processing:
+  threshold: 3  # Umbral más bajo para desarrollo/testing
+
+acquisition:
+  signal:
+    size: 10  # Señales más pequeñas para desarrollo rápido
+
+# Configuraciones específicas de desarrollo
+debug: true
+logging_level: "DEBUG"
+verbose_output: true
+
+# Configuración de desarrollo para testing
+dev_settings:
+  auto_reload: true
+  mock_data: false
+  test_mode: false
