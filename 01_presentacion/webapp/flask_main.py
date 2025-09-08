@@ -72,6 +72,56 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % self.username
 
+
+# Add basic routes for menu functionality
+@app.route('/acerca/')
+def acerca():
+    return render_template('general/acerca.html')
+
+
+@app.route('/componentes/')
+def componentes():
+    lista_tipos_componentes = [
+        "Demo: Componentes del sistema",
+        "Esta página requiere integración completa con el sistema DDD"
+    ]
+    return render_template('aplicacion/componentes.html', lista=lista_tipos_componentes)
+
+
+@app.route('/versiones/')
+def versiones():
+    lista_versiones = [
+        "Flask: 3.0.0",
+        "Bootstrap: 4.0.0",
+        "Python: 3.11+"
+    ]
+    return render_template('aplicacion/versiones.html', lista=lista_versiones)
+
+
+@app.route("/adquisicion/", methods=['GET', 'POST'])
+def adquisicion():
+    from forms import SenialForm
+    form = SenialForm()
+    seniales_demo = []
+    
+    if form.validate_on_submit():
+        flash('Señal demo adquirida exitosamente')
+        seniales_demo.append(f"ID: {form.identificador.data}")
+        return redirect(url_for('adquisicion'))
+    
+    return render_template('aplicacion/adquisicion.html', form=form, seniales=seniales_demo)
+
+
+@app.route("/procesamiento/")
+def procesamiento():
+    return render_template('aplicacion/procesamiento.html')
+
+
+@app.route("/visualizacion/")
+def visualizacion():
+    return render_template('aplicacion/visualizacion.html')
+
+
 if __name__ == '__main__':
     # SECURITY: Debug mode now controlled by environment variable
     debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
