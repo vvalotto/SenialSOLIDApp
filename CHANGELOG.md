@@ -5,6 +5,42 @@ All notable changes to SenialSOLIDApp will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.5.0] - 2025-09-08 - SSA-18 Flask 3.0.0 Modernization Completed
+
+### ✅ COMPLETED - Sprint 2 Web Framework  
+- **SSA-18**: Flask 3.0.0 modernization completed successfully
+- Full menu navigation system implemented and operational
+- Complete Flask 3.0.0 compatibility verified with manual testing
+- Zero breaking changes - all existing functionality preserved
+
+### Added
+- Complete menu routing system with 6 functional routes:
+  - `/acerca/` - About page with application information
+  - `/componentes/` - Components demo system integration page
+  - `/versiones/` - Version information display (Flask 3.0.0, Bootstrap 4.0.0, Python 3.11+)
+  - `/adquisicion/` - Signal acquisition with SenialForm integration
+  - `/procesamiento/` - Signal processing functionality page
+  - `/visualizacion/` - Data visualization interface
+- Enhanced dependency management with `python-dotenv==1.0.0`
+- Improved template inheritance structure
+
+### Changed
+- **✅ COMPLETED**: Flask framework upgraded to 3.0.0 with full compatibility
+- Template inheritance path corrected: `base.html` → `general/base.html`
+- Cleaned redundant imports in forms.py (removed unused `Form` import)
+- All menu navigation fully operational - resolved "Page Not Found" issues
+
+### Fixed
+- Critical routing issue: All menu options now navigate correctly
+- Template not found error resolved with proper inheritance path
+- Import optimization in WTForms usage
+- Manual testing confirms complete functionality
+
+### Infrastructure
+- **Jira Integration**: [SSA-18](https://vvalotto.atlassian.net/browse/SSA-18) - Status: ✅ Finalizada
+- **GitHub Branch**: [feature/SSA-18-flask-modernization](https://github.com/vvalotto/SenialSOLIDApp/tree/feature/SSA-18-flask-modernization)
+- **Key Commit**: [6170884] - Flask 3.0.0 modernization with full menu functionality
+
 ## [v1.4.0] - 2025-09-04 - SSA-9 Configuration Modernization Completed
 
 ### ✅ COMPLETED - Sprint 1 Infrastructure  
@@ -226,10 +262,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Velocity:** 5.2 SP/day (560% better than planned) ⚡ **EXCEPTIONAL**
 - **Security Status:** **ZERO critical vulnerabilities** 🛡️ **ACHIEVED**
 
-### Sprint 2: Web Framework (Weeks 3-4) - Dependency Satisfied
-- Flask 2.3+ upgrade (ready to start - Python 3.11 dependency met)
-- Bootstrap 5 modernization
-- Responsive UI improvements
+### ✅ Sprint 2: Web Framework (Week 3) - PARTIALLY COMPLETED
+- ✅ [SSA-18](https://vvalotto.atlassian.net/browse/SSA-18): Flask 3.0.0 modernization - **COMPLETED** ⚡
+- [SSA-19]: Bootstrap 5.3+ migration - **READY TO START**
+- [SSA-20]: UX/Accessibility improvements - **READY TO START** 
+- [SSA-21]: Performance optimization - **READY TO START**
 
 ### Sprint 3: Code Quality (Weeks 5-6) - Planned
 - Structured logging implementation
