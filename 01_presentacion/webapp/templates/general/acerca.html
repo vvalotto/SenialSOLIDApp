@@ -1,13 +1,74 @@
 {% extends "general/base.html" %}
 
-{% block title %}Señal - SOLID{% endblock %}
+{% block title %}Acerca de - Senial SOLID{% endblock %}
 
 {% block page_content %}
-<div class="panel panel-info">
-    <div class="panel-body">
-        <p>Autor: Victor Valotto</p>
-        <p>mail: vvalotto@gmail.com</p>
-        <p>Año: 2015</p>
+<article role="main" aria-labelledby="about-title">
+    <header class="mb-4">
+        <h1 id="about-title" class="display-5 text-primary">
+            <i class="bi bi-info-circle-fill me-3"></i>
+            Acerca del Proyecto
+        </h1>
+    </header>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <section aria-labelledby="author-info">
+                <h2 id="author-info" class="h4 mb-4 text-secondary">Información del Autor</h2>
+                
+                <div class="row g-4">
+                    <div class="col-12 col-md-6">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-person-fill text-primary fs-4 me-3" aria-hidden="true"></i>
+                            <div>
+                                <strong>Autor:</strong>
+                                <span class="ms-2">Victor Valotto</span>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-envelope-fill text-primary fs-4 me-3" aria-hidden="true"></i>
+                            <div>
+                                <strong>Email:</strong>
+                                <a href="mailto:vvalotto@gmail.com" 
+                                   class="ms-2 text-decoration-none"
+                                   aria-label="Enviar email a Victor Valotto">
+                                    vvalotto@gmail.com
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-calendar-event text-primary fs-4 me-3" aria-hidden="true"></i>
+                            <div>
+                                <strong>Año:</strong>
+                                <time datetime="2015" class="ms-2">2015</time>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-code-slash text-primary fs-4 me-3" aria-hidden="true"></i>
+                            <div>
+                                <strong>Versión actual:</strong>
+                                <span class="badge bg-success ms-2">v1.5.0</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-12 col-md-6">
+                        <h3 class="h5 mb-3">Sobre el Proyecto</h3>
+                        <p class="text-muted">
+                            Esta aplicación demuestra la implementación práctica de los principios SOLID 
+                            en el desarrollo de un sistema de procesamiento de señales utilizando Flask y Python.
+                        </p>
+                        <p class="text-muted">
+                            El proyecto incluye módulos para adquisición, procesamiento y visualización de señales, 
+                            aplicando las mejores prácticas de desarrollo de software.
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </div>
     </div>
-</div>
+</article>
 {% endblock %}

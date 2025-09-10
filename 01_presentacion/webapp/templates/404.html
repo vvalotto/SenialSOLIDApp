@@ -1,16 +1,33 @@
 {% extends "general/base.html" %}
 
-{% block title %}Flasky - Page Not Found{% endblock %}
+{% block title %}Senial SOLID - Página no encontrada{% endblock %}
 
 {% block page_content %}
-<div class="panel panel-default">
-    <div class="panel-body">
-        <p align="center">
-            <img src="{{ url_for('static', filename = 'pagina_no_enontrada.png') }}" class="img-responsive">
-        </p>
-        <h3 align="center">
-            <span class="label label-warning">Página no econtrada</span>
-        </h3>
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body text-center py-5">
+                <div class="mb-4">
+                    <img src="{{ url_for('static', filename = 'pagina_no_encontrada.png') }}" 
+                         class="img-fluid" 
+                         alt="Página no encontrada"
+                         style="max-width: 300px;">
+                </div>
+                <div class="mb-4">
+                    <span class="badge bg-warning text-dark fs-5 px-3 py-2">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Página no encontrada
+                    </span>
+                </div>
+                <p class="text-muted mb-4">
+                    La página que buscas no se encuentra disponible.
+                </p>
+                <a href="/" class="btn btn-primary">
+                    <i class="bi bi-house me-2"></i>
+                    Ir al inicio
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
