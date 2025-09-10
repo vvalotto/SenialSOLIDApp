@@ -1,14 +1,69 @@
 {% extends "general/base.html" %}
 
-{% block title %}Señal - SOLID{% endblock %}
+{% block title %}Procesamiento - Señal SOLID{% endblock %}
 
 {% block page_content %}
-<div class="panel panel-primary">
-    <div class="panel-heading">
-         <h3><p class="text-center">Procesamiento de la Señal</p></h3>
-    </div>
-    <div class="panel-body">
-        procesamiento
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-12 col-xl-10">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="card-title h3 mb-0 text-center">
+                        <i class="bi bi-cpu me-2"></i>
+                        Procesamiento de la Señal
+                    </h1>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="alert alert-info" role="alert">
+                                <i class="bi bi-info-circle me-2"></i>
+                                <strong>Módulo en desarrollo:</strong> 
+                                Este módulo implementará algoritmos avanzados de procesamiento de señales digitales.
+                            </div>
+                            
+                            <div class="row g-4 mt-3">
+                                <div class="col-12 col-md-6 col-lg-4">
+                                    <div class="card h-100 border-0 bg-light">
+                                        <div class="card-body text-center">
+                                            <i class="bi bi-filter text-primary fs-1 mb-3"></i>
+                                            <h5 class="card-title">Filtrado</h5>
+                                            <p class="card-text text-muted">
+                                                Filtros digitales para mejorar la calidad de la señal
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12 col-md-6 col-lg-4">
+                                    <div class="card h-100 border-0 bg-light">
+                                        <div class="card-body text-center">
+                                            <i class="bi bi-activity text-success fs-1 mb-3"></i>
+                                            <h5 class="card-title">Análisis</h5>
+                                            <p class="card-text text-muted">
+                                                Análisis espectral y temporal de señales
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12 col-md-6 col-lg-4">
+                                    <div class="card h-100 border-0 bg-light">
+                                        <div class="card-body text-center">
+                                            <i class="bi bi-gear text-warning fs-1 mb-3"></i>
+                                            <h5 class="card-title">Transformación</h5>
+                                            <p class="card-text text-muted">
+                                                FFT, Wavelets y otras transformadas
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

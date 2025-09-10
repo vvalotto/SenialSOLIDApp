@@ -1,14 +1,89 @@
 {% extends "general/base.html" %}
 
-{% block title %}Señal - SOLID{% endblock %}
+{% block title %}Visualización - Señal SOLID{% endblock %}
 
 {% block page_content %}
-<div class="panel panel-primary">
-    <div class="panel-heading">
-         <h3><p class="text-center">Visualización</p></h3>
-    </div>
-    <div class="panel-body">
-        Visualizacion
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-12 col-xl-10">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="card-title h3 mb-0 text-center">
+                        <i class="bi bi-graph-up me-2"></i>
+                        Visualización de Señales
+                    </h1>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="alert alert-info" role="alert">
+                                <i class="bi bi-info-circle me-2"></i>
+                                <strong>Centro de visualización:</strong> 
+                                Herramientas interactivas para visualizar y analizar señales en tiempo real.
+                            </div>
+                            
+                            <!-- Placeholder para gráficos -->
+                            <div class="row g-4 mt-3">
+                                <div class="col-12 col-lg-8">
+                                    <div class="card border-secondary">
+                                        <div class="card-header bg-light">
+                                            <h5 class="mb-0">
+                                                <i class="bi bi-bar-chart me-2"></i>
+                                                Gráfico Principal
+                                            </h5>
+                                        </div>
+                                        <div class="card-body" style="height: 300px; background: linear-gradient(45deg, #f8f9fa, #e9ecef);">
+                                            <div class="d-flex align-items-center justify-content-center h-100">
+                                                <div class="text-center text-muted">
+                                                    <i class="bi bi-graph-up display-1 mb-3"></i>
+                                                    <p>Área de visualización de señales</p>
+                                                    <small>Aquí se mostrarán los gráficos interactivos</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12 col-lg-4">
+                                    <div class="card h-100">
+                                        <div class="card-header bg-light">
+                                            <h5 class="mb-0">
+                                                <i class="bi bi-sliders me-2"></i>
+                                                Controles
+                                            </h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label class="form-label small">Tipo de gráfico</label>
+                                                <select class="form-select form-select-sm" disabled>
+                                                    <option>Temporal</option>
+                                                    <option>Espectral</option>
+                                                    <option>Espectrogram</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label class="form-label small">Escala</label>
+                                                <input type="range" class="form-range" disabled>
+                                            </div>
+                                            
+                                            <div class="d-grid gap-2">
+                                                <button class="btn btn-outline-primary btn-sm" disabled>
+                                                    <i class="bi bi-zoom-in me-1"></i>Zoom
+                                                </button>
+                                                <button class="btn btn-outline-secondary btn-sm" disabled>
+                                                    <i class="bi bi-download me-1"></i>Exportar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

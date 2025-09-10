@@ -1,60 +1,247 @@
 {% extends "general/base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}Señal - SOLID{% endblock %}
 
 {% block page_content %}
-<div class="row">
-    <div class="col-md-6">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                 <h3><p class="text-center">Adquisición de la Señal</p></h3>
+<div class="row g-4">
+    <div class="col-12 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                 <h3 id="form-title" class="text-center mb-0">Adquisición de la Señal</h3>
             </div>
-            <div class="panel-body">
+            <div class="card-body">
 
-                <form action = {{ url_for("adquisicion") }} method="POST" >
-                    <div class="form-group">
-                        <p>  {{ form.csrf_token }} </p>
-                        <p>{{ form.identificador.label }} </p>
-                        <p>{{ form.identificador(class="form-control") }}</p>
-                    </div>
-                    <div class="form-group">
-                        <p>{{ form.descripcion.label }} </p>
-                        <p>{{form.descripcion(class="form-control") }}</p>
-                    </div>
-                    <div class="form-group">
-                        <p>{{ form.fecha.label }} </p>
-                        <p>{{ form.fecha(class="form-control") }}</p>
-                    </div>
-                    <div>
-                        <p align="center">{{ form.adquirir(class="btn btn-primary") }} </p>
-                    </div>
-
+                <form action = {{ url_for("adquisicion") }} method="POST" 
+                      role="form" 
+                      aria-labelledby="form-title"
+                      class="needs-validation" 
+                      novalidate>
+                    <!-- HTML5 form without CSRF for testing -->
+                    
+                    <fieldset>
+                        <legend class="visually-hidden">Datos de la señal</legend>
+                        
+                        <div class="mb-3">
+                            <label class="form-label" for="identificador">Identificador de Señal</label>
+                            <div class="input-group has-validation">
+                                <span class="input-group-text">
+                                    <i class="bi bi-tag text-primary"></i>
+                                </span>
+                                <input type="text" class="form-control" id="identificador" name="identificador"
+                                       aria-describedby="identificador-help" required
+                                       pattern="[A-Za-z0-9_-]+" minlength="3" maxlength="20"
+                                       title="Solo letras, números, guiones y guiones bajos (3-20 caracteres)">
+                                <div class="invalid-feedback">
+                                    Por favor ingresa un identificador válido (3-20 caracteres, solo letras, números, _ y -)
+                                </div>
+                                <div class="valid-feedback">
+                                    ¡Identificador válido!
+                                </div>
+                            </div>
+                            <div id="identificador-help" class="form-text">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Ingresa un identificador único para la señal (3-20 caracteres)
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label" for="descripcion">Descripción</label>
+                            <div class="input-group has-validation">
+                                <span class="input-group-text">
+                                    <i class="bi bi-file-text text-info"></i>
+                                </span>
+                                <textarea class="form-control" id="descripcion" name="descripcion"
+                                          aria-describedby="descripcion-help" maxlength="200"
+                                          placeholder="Ej: Señal de audio de micrófono ambiente" rows="3"></textarea>
+                                <div class="invalid-feedback">
+                                    La descripción debe tener máximo 200 caracteres
+                                </div>
+                                <div class="valid-feedback">
+                                    ¡Descripción válida!
+                                </div>
+                            </div>
+                            <div id="descripcion-help" class="form-text">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Describe brevemente la señal a procesar (opcional, máx. 200 caracteres)
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label" for="fecha">Fecha de Adquisición</label>
+                            <div class="input-group has-validation">
+                                <span class="input-group-text">
+                                    <i class="bi bi-calendar-event text-success"></i>
+                                </span>
+                                <input type="date" class="form-control" id="fecha" name="fecha"
+                                       aria-describedby="fecha-help" required>
+                                <div class="invalid-feedback">
+                                    Por favor selecciona una fecha válida
+                                </div>
+                                <div class="valid-feedback">
+                                    ¡Fecha válida!
+                                </div>
+                            </div>
+                            <div id="fecha-help" class="form-text">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Selecciona la fecha de adquisición de la señal
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg" aria-describedby="submit-help">
+                                <i class="bi bi-play-circle me-2"></i>
+                                Adquirir Señal
+                            </button>
+                            <div id="submit-help" class="form-text text-center mt-2">
+                                <i class="bi bi-lightning me-1"></i>
+                                La señal será procesada inmediatamente tras el envío
+                            </div>
+                        </div>
+                    </fieldset>
                 </form>
             </div>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                 <h3><p class="text-center">Lista de Señales Adquiridas</p></h3>
+    <div class="col-12 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                 <h3 id="signals-title" class="text-center mb-0">Lista de Señales Adquiridas</h3>
             </div>
-            <h3 align="center"><span class="label label-default">Idenficadores</span></h3>
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <table class="table table-bordered">
-                        {% if seniales != [] %}
-                            {% for valor in seniales %}
-                            <tr>
-                                <td align="center">{{ valor }} </td>
-                            </tr>
-                            {% endfor %}
-                        {% else %}
-                            <tr>
-                                <td align="center">Sin datos</td>
-                            </tr>
-                        {% endif %}
-                    </table>
+            <div class="text-center mb-3">
+                <span class="badge bg-secondary fs-6">Identificadores</span>
+            </div>
+            <div class="card mt-3">
+                <div class="card-body">
+                    <!-- Table Controls -->
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
+                        <div class="mb-2 mb-md-0">
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle me-1"></i>
+                                {% if seniales %}
+                                    Mostrando {{ seniales|length }} señale{{ 's' if seniales|length != 1 else '' }}
+                                {% else %}
+                                    No hay señales registradas
+                                {% endif %}
+                            </small>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-secondary btn-sm" data-action="refresh" title="Actualizar tabla">
+                                <i class="bi bi-arrow-clockwise"></i>
+                            </button>
+                            <button class="btn btn-outline-primary btn-sm" data-action="export" title="Exportar datos" {{ 'disabled' if not seniales }}>
+                                <i class="bi bi-download"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive" role="region" aria-labelledby="signals-title">
+                        <table class="table table-striped table-hover" 
+                               id="signals-table"
+                               role="table" 
+                               aria-label="Lista de señales adquiridas"
+                               aria-describedby="signals-description"
+                               data-toggle="table"
+                               data-classes="table table-striped table-hover">
+                            <caption class="visually-hidden" id="signals-description">
+                                Tabla que muestra los identificadores de las señales que han sido adquiridas en el sistema. 
+                                {% if seniales %}Contiene {{ seniales|length }} registro{{ 's' if seniales|length != 1 else '' }}.{% endif %}
+                            </caption>
+                            <thead class="table-dark">
+                                <tr>
+                                    <th scope="col" class="text-center position-relative" 
+                                        style="min-width: 120px;"
+                                        aria-sort="none"
+                                        tabindex="0"
+                                        role="columnheader">
+                                        <i class="bi bi-tag-fill me-2"></i>
+                                        Identificador de Señal
+                                        <i class="bi bi-arrow-down-up text-muted ms-2 sort-icon"></i>
+                                    </th>
+                                    <th scope="col" class="text-center d-none d-md-table-cell" 
+                                        style="min-width: 100px;">
+                                        <i class="bi bi-calendar3 me-2"></i>
+                                        Estado
+                                    </th>
+                                    <th scope="col" class="text-center" style="min-width: 80px;">
+                                        <i class="bi bi-gear me-2"></i>
+                                        Acciones
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if seniales and seniales != [] %}
+                                    {% for valor in seniales %}
+                                    <tr class="align-middle">
+                                        <td class="text-center fw-medium" role="cell">
+                                            <code class="bg-light px-2 py-1 rounded">{{ valor }}</code>
+                                        </td>
+                                        <td class="text-center d-none d-md-table-cell" role="cell">
+                                            <span class="badge bg-success rounded-pill">
+                                                <i class="bi bi-check-circle me-1"></i>Activa
+                                            </span>
+                                        </td>
+                                        <td class="text-center" role="cell">
+                                            <div class="btn-group btn-group-sm" role="group" aria-label="Acciones para {{ valor }}">
+                                                <button class="btn btn-outline-primary" 
+                                                        data-action="view" data-signal-id="{{ valor }}" 
+                                                        title="Ver detalles de {{ valor }}">
+                                                    <i class="bi bi-eye"></i>
+                                                    <span class="d-none d-lg-inline ms-1">Ver</span>
+                                                </button>
+                                                <button class="btn btn-outline-warning" 
+                                                        data-action="edit" data-signal-id="{{ valor }}" 
+                                                        title="Editar {{ valor }}">
+                                                    <i class="bi bi-pencil"></i>
+                                                    <span class="d-none d-lg-inline ms-1">Editar</span>
+                                                </button>
+                                                <button class="btn btn-outline-danger" 
+                                                        data-action="delete" data-signal-id="{{ valor }}" 
+                                                        title="Eliminar {{ valor }}">
+                                                    <i class="bi bi-trash"></i>
+                                                    <span class="d-none d-lg-inline ms-1">Eliminar</span>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="3" class="text-center py-5" role="cell">
+                                            <div class="text-muted">
+                                                <i class="bi bi-inbox display-4 mb-3"></i>
+                                                <p class="h5 mb-2">No hay señales registradas</p>
+                                                <p class="small mb-0">
+                                                    Utiliza el formulario de la izquierda para agregar tu primera señal
+                                                </p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    {% if seniales and seniales|length > 5 %}
+                    <!-- Pagination for large datasets -->
+                    <nav aria-label="Navegación de tabla de señales" class="mt-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                Página 1 de 1 ({{ seniales|length }} total)
+                            </small>
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item disabled">
+                                    <span class="page-link">Anterior</span>
+                                </li>
+                                <li class="page-item active">
+                                    <span class="page-link">1</span>
+                                </li>
+                                <li class="page-item disabled">
+                                    <span class="page-link">Siguiente</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                    {% endif %}
                 </div>
             </div>
 
