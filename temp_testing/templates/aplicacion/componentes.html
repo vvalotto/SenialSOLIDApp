@@ -1,0 +1,127 @@
+{% extends "general/base.html" %}
+
+{% block title %}Componentes - Señal SOLID{% endblock %}
+
+{% block page_content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-12 col-xl-10">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="card-title h3 mb-0 text-center">
+                        <i class="bi bi-puzzle me-2"></i>
+                        Tipos de Componentes
+                    </h1>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="alert alert-info" role="alert">
+                                <i class="bi bi-lightbulb me-2"></i>
+                                <strong>Principios SOLID aplicados:</strong> 
+                                Cada componente sigue los principios de responsabilidad única, abierto/cerrado, y más.
+                            </div>
+                            
+                            {% if lista %}
+                                <div class="row g-4 mt-3">
+                                    {% for item in lista %}
+                                    <div class="col-12 col-md-6 col-lg-4">
+                                        <div class="card h-100 border-primary">
+                                            <div class="card-body text-center">
+                                                <i class="bi bi-gear text-primary fs-1 mb-3"></i>
+                                                <h5 class="card-title">{{ item }}</h5>
+                                                <p class="card-text text-muted small">
+                                                    Componente diseñado siguiendo principios SOLID
+                                                </p>
+                                                <span class="badge bg-success">Disponible</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="row justify-content-center mt-4">
+                                    <div class="col-12 col-md-8 col-lg-6">
+                                        <div class="card border-0 bg-light">
+                                            <div class="card-body text-center py-5">
+                                                <i class="bi bi-puzzle text-muted display-4 mb-3"></i>
+                                                <h5 class="card-title text-muted">Sin componentes</h5>
+                                                <p class="card-text text-muted">
+                                                    No hay componentes registrados en este momento.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            
+                            <!-- Información de principios SOLID -->
+                            <div class="row mt-5">
+                                <div class="col-12">
+                                    <div class="card border-info">
+                                        <div class="card-header bg-info text-white">
+                                            <h5 class="mb-0">
+                                                <i class="bi bi-diagram-3 me-2"></i>
+                                                Principios SOLID Aplicados
+                                            </h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row g-4">
+                                                <div class="col-12 col-sm-6 col-lg-2-4">
+                                                    <div class="text-center">
+                                                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                                            <strong>S</strong>
+                                                        </div>
+                                                        <p class="mt-2 mb-0 small"><strong>Single Responsibility</strong></p>
+                                                        <small class="text-muted">Una sola razón para cambiar</small>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-sm-6 col-lg-2-4">
+                                                    <div class="text-center">
+                                                        <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                                            <strong>O</strong>
+                                                        </div>
+                                                        <p class="mt-2 mb-0 small"><strong>Open/Closed</strong></p>
+                                                        <small class="text-muted">Abierto para extensión, cerrado para modificación</small>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-sm-6 col-lg-2-4">
+                                                    <div class="text-center">
+                                                        <div class="bg-warning text-dark rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                                            <strong>L</strong>
+                                                        </div>
+                                                        <p class="mt-2 mb-0 small"><strong>Liskov Substitution</strong></p>
+                                                        <small class="text-muted">Los objetos derivados deben ser substituibles</small>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-sm-6 col-lg-2-4">
+                                                    <div class="text-center">
+                                                        <div class="bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                                            <strong>I</strong>
+                                                        </div>
+                                                        <p class="mt-2 mb-0 small"><strong>Interface Segregation</strong></p>
+                                                        <small class="text-muted">Interfaces específicas son mejores</small>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-sm-6 col-lg-2-4">
+                                                    <div class="text-center">
+                                                        <div class="bg-danger text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                                            <strong>D</strong>
+                                                        </div>
+                                                        <p class="mt-2 mb-0 small"><strong>Dependency Inversion</strong></p>
+                                                        <small class="text-muted">Depender de abstracciones</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
