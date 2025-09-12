@@ -7,6 +7,8 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 import os
 from config import config
+# SSA-21 Performance Integration (DISABLED due to CSS loading compatibility issues)
+PERFORMANCE_AVAILABLE = False  # Temporarily disabled for CSS compatibility
 
 # SECURITY FIX: Removed hardcoded SECRET_KEY "Victor" 
 # Now using secure configuration management
@@ -21,6 +23,14 @@ app = Flask(__name__)
 app.config.from_object(config[config_name])
 # SECURITY: Initialize and validate configuration
 config[config_name].init_app(app)
+
+# SSA-21: Performance optimizations temporarily disabled for CSS compatibility
+if PERFORMANCE_AVAILABLE:
+    print("✅ SSA-21 Performance optimizations would be available")
+    print("⚠️ Currently disabled to resolve CSS loading issues")
+else:
+    print("⚠️ SSA-21 Performance middleware disabled for CSS compatibility")
+
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 db = SQLAlchemy(app)
@@ -125,4 +135,4 @@ def visualizacion():
 if __name__ == '__main__':
     # SECURITY: Debug mode now controlled by environment variable
     debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
-    app.run(debug=debug_mode)
+    app.run(debug=debug_mode, port=5001)
