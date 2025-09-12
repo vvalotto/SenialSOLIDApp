@@ -1,21 +1,13 @@
 {% extends "general/base.html" %}
 
-{% block title %}Adquisición - Señal SOLID{% endblock %}
-
-{% block breadcrumbs %}
-{% set breadcrumb_items = [
-    {'title': 'Aplicación', 'url': '#', 'icon': 'bi bi-gear-fill'},
-    {'title': 'Adquisición', 'url': '/adquisicion/', 'icon': 'bi bi-plus-circle'}
-] %}
-{{ super() }}
-{% endblock %}
+{% block title %}Señal - SOLID{% endblock %}
 
 {% block page_content %}
 <div class="row g-4">
     <div class="col-12 col-lg-6">
         <div class="card shadow-sm">
             <div class="card-header bg-primary text-white">
-                 <h1 id="form-title" class="text-center mb-0">Adquisición de la Señal</h1>
+                 <h3 id="form-title" class="text-center mb-0">Adquisición de la Señal</h3>
             </div>
             <div class="card-body">
 
@@ -24,21 +16,27 @@
                       aria-labelledby="form-title"
                       class="needs-validation" 
                       novalidate>
-                    <!-- HTML5 form without CSRF for testing -->
+                    {{ form.csrf_token }}
                     
                     <fieldset>
                         <legend class="visually-hidden">Datos de la señal</legend>
                         
                         <div class="mb-3">
-                            <label class="form-label" for="identificador">Identificador de Señal</label>
+                            {{ form.identificador.label(class="form-label", for="identificador") }}
                             <div class="input-group has-validation">
                                 <span class="input-group-text">
                                     <i class="bi bi-tag text-primary"></i>
                                 </span>
-                                <input type="text" class="form-control" id="identificador" name="identificador"
-                                       aria-describedby="identificador-help" required
-                                       pattern="[A-Za-z0-9_-]+" minlength="3" maxlength="20"
-                                       title="Solo letras, números, guiones y guiones bajos (3-20 caracteres)">
+                                {{ form.identificador(class="form-control", 
+                                    id="identificador", 
+                                    **{
+                                        "aria-describedby": "identificador-help", 
+                                        "required": "true",
+                                        "pattern": "[A-Za-z0-9_-]+",
+                                        "minlength": "3",
+                                        "maxlength": "20",
+                                        "title": "Solo letras, números, guiones y guiones bajos (3-20 caracteres)"
+                                    }) }}
                                 <div class="invalid-feedback">
                                     Por favor ingresa un identificador válido (3-20 caracteres, solo letras, números, _ y -)
                                 </div>
@@ -53,14 +51,18 @@
                         </div>
                         
                         <div class="mb-3">
-                            <label class="form-label" for="descripcion">Descripción</label>
+                            {{ form.descripcion.label(class="form-label", for="descripcion") }}
                             <div class="input-group has-validation">
                                 <span class="input-group-text">
                                     <i class="bi bi-file-text text-info"></i>
                                 </span>
-                                <textarea class="form-control" id="descripcion" name="descripcion"
-                                          aria-describedby="descripcion-help" maxlength="200"
-                                          placeholder="Ej: Señal de audio de micrófono ambiente" rows="3"></textarea>
+                                {{ form.descripcion(class="form-control", 
+                                    id="descripcion", 
+                                    **{
+                                        "aria-describedby": "descripcion-help",
+                                        "maxlength": "200",
+                                        "placeholder": "Ej: Señal de audio de micrófono ambiente"
+                                    }) }}
                                 <div class="invalid-feedback">
                                     La descripción debe tener máximo 200 caracteres
                                 </div>
@@ -75,13 +77,17 @@
                         </div>
                         
                         <div class="mb-3">
-                            <label class="form-label" for="fecha">Fecha de Adquisición</label>
+                            {{ form.fecha.label(class="form-label", for="fecha") }}
                             <div class="input-group has-validation">
                                 <span class="input-group-text">
                                     <i class="bi bi-calendar-event text-success"></i>
                                 </span>
-                                <input type="date" class="form-control" id="fecha" name="fecha"
-                                       aria-describedby="fecha-help" required>
+                                {{ form.fecha(class="form-control", 
+                                    id="fecha", 
+                                    **{
+                                        "aria-describedby": "fecha-help", 
+                                        "required": "true"
+                                    }) }}
                                 <div class="invalid-feedback">
                                     Por favor selecciona una fecha válida
                                 </div>
@@ -96,10 +102,11 @@
                         </div>
                         
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg" aria-describedby="submit-help">
-                                <i class="bi bi-play-circle me-2"></i>
-                                Adquirir Señal
-                            </button>
+                            {{ form.adquirir(class="btn btn-primary btn-lg", 
+                                **{
+                                    "aria-describedby": "submit-help",
+                                    "type": "submit"
+                                }) }}
                             <div id="submit-help" class="form-text text-center mt-2">
                                 <i class="bi bi-lightning me-1"></i>
                                 La señal será procesada inmediatamente tras el envío
@@ -113,7 +120,7 @@
     <div class="col-12 col-lg-6">
         <div class="card shadow-sm">
             <div class="card-header bg-primary text-white">
-                 <h2 id="signals-title" class="text-center mb-0">Lista de Señales Adquiridas</h2>
+                 <h3 id="signals-title" class="text-center mb-0">Lista de Señales Adquiridas</h3>
             </div>
             <div class="text-center mb-3">
                 <span class="badge bg-secondary fs-6">Identificadores</span>

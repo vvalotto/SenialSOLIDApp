@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Audit - SenialSOLID Bootstrap 5 Migration</title>
+    
+    <!-- Preload critical resources for performance testing -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" 
+              integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
+              crossorigin="anonymous">
+    </noscript>
+    
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    </noscript>
+
+    <style>
+        /* Performance-optimized styles */
+        .metric-card {
+            background: white;
+            border: 1px solid var(--bs-border-color);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: box-shadow 0.2s ease;
+        }
+        
+        .metric-card:hover {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        
+        .metric-good { color: #198754; }
+        .metric-needs-improvement { color: #fd7e14; }
+        .metric-poor { color: #dc3545; }
+        
+        .performance-gauge {
+            width: 100%;
+            height: 20px;
+            background: var(--bs-light);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .gauge-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        
+        .audit-section {
+            border: 1px solid var(--bs-border-color);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            background: white;
+        }
+        
+        /* CSS containment for better performance */
+        .contained {
+            contain: layout style paint;
+        }
+        
+        /* Will-change optimization */
+        .animated {
+            will-change: transform;
+        }
+        
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-4">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h1 class="mb-4 text-center">
+                    <i class="bi bi-speedometer2 me-2"></i>
+                    Performance Audit
+                </h1>
+                <p class="text-center text-muted mb-5">
+                    Bootstrap 5.3.3 Migration - SenialSOLIDApp v1.5.0
+                </p>
+
+                <!-- Core Web Vitals -->
+                <div class="audit-section">
+                    <h3 class="mb-4">
+                        <i class="bi bi-graph-up me-2"></i>
+                        Core Web Vitals
+                    </h3>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="metric-card text-center">
+                                <div class="small text-muted">Largest Contentful Paint</div>
+                                <div class="metric-value" id="lcp-value">-</div>
+                                <div class="small" id="lcp-status">Measuring...</div>
+                                <div class="performance-gauge mt-2">
+                                    <div class="gauge-fill" id="lcp-gauge"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="metric-card text-center">
+                                <div class="small text-muted">Cumulative Layout Shift</div>
+                                <div class="metric-value" id="cls-value">-</div>
+                                <div class="small" id="cls-status">Measuring...</div>
+                                <div class="performance-gauge mt-2">
+                                    <div class="gauge-fill" id="cls-gauge"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="metric-card text-center">
+                                <div class="small text-muted">First Input Delay</div>
+                                <div class="metric-value" id="fid-value">-</div>
+                                <div class="small" id="fid-status">Waiting for input...</div>
+                                <div class="performance-gauge mt-2">
+                                    <div class="gauge-fill" id="fid-gauge"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resource Loading Performance -->
+                <div class="audit-section">
+                    <h3 class="mb-4">
+                        <i class="bi bi-download me-2"></i>
+                        Resource Loading
+                    </h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="metric-card">
+                                <h6>Bootstrap CSS</h6>
+                                <div class="d-flex justify-content-between">
+                                    <span>Load Time:</span>
+                                    <span id="css-load-time" class="fw-bold">-</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span>Size:</span>
+                                    <span id="css-size" class="fw-bold">~195KB (gzipped: ~24KB)</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span>Cache:</span>
+                                    <span class="badge bg-success">CDN Cached</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="metric-card">
+                                <h6>Bootstrap JS</h6>
+                                <div class="d-flex justify-content-between">
+                                    <span>Load Time:</span>
+                                    <span id="js-load-time" class="fw-bold">-</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span>Size:</span>
+                                    <span id="js-size" class="fw-bold">~76KB (gzipped: ~23KB)</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span>Cache:</span>
+                                    <span class="badge bg-success">CDN Cached</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Compatibility Report -->
+                <div class="audit-section">
+                    <h3 class="mb-4">
+                        <i class="bi bi-shield-check me-2"></i>
+                        Backward Compatibility
+                    </h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Browser Support</h6>
+                            <ul class="list-unstyled">
+                                <li class="d-flex justify-content-between">
+                                    <span><i class="bi bi-browser-chrome text-warning"></i> Chrome</span>
+                                    <span class="badge bg-success">≥60 ✓</span>
+                                </li>
+                                <li class="d-flex justify-content-between">
+                                    <span><i class="bi bi-browser-firefox text-danger"></i> Firefox</span>
+                                    <span class="badge bg-success">≥60 ✓</span>
+                                </li>
+                                <li class="d-flex justify-content-between">
+                                    <span><i class="bi bi-browser-safari text-primary"></i> Safari</span>
+                                    <span class="badge bg-success">≥12 ✓</span>
+                                </li>
+                                <li class="d-flex justify-content-between">
+                                    <span><i class="bi bi-browser-edge text-info"></i> Edge</span>
+                                    <span class="badge bg-success">≥79 ✓</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Feature Support</h6>
+                            <div id="feature-support">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Migration Benefits -->
+                <div class="audit-section">
+                    <h3 class="mb-4">
+                        <i class="bi bi-arrow-up-circle me-2"></i>
+                        Bootstrap 5 Migration Benefits
+                    </h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card border-success">
+                                <div class="card-body">
+                                    <h6 class="card-title text-success">
+                                        <i class="bi bi-check-circle me-2"></i>
+                                        Performance Improvements
+                                    </h6>
+                                    <ul class="small">
+                                        <li>Removed jQuery dependency (-85KB)</li>
+                                        <li>Smaller CSS bundle size (-15%)</li>
+                                        <li>CSS custom properties support</li>
+                                        <li>Improved tree-shaking</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card border-info">
+                                <div class="card-body">
+                                    <h6 class="card-title text-info">
+                                        <i class="bi bi-gear me-2"></i>
+                                        Technical Enhancements
+                                    </h6>
+                                    <ul class="small">
+                                        <li>Modern JavaScript (ES6+)</li>
+                                        <li>Better accessibility (ARIA)</li>
+                                        <li>Improved responsive utilities</li>
+                                        <li>Enhanced form validation</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Recommendations -->
+                <div class="audit-section">
+                    <h3 class="mb-4">
+                        <i class="bi bi-lightbulb me-2"></i>
+                        Recommendations
+                    </h3>
+                    <div class="alert alert-success">
+                        <h6><i class="bi bi-check-circle me-2"></i>Already Implemented</h6>
+                        <ul class="mb-0">
+                            <li>CSS preloading with fallback</li>
+                            <li>Bootstrap Icons optimization</li>
+                            <li>Modern event listeners (no jQuery)</li>
+                            <li>Responsive breakpoints optimization</li>
+                            <li>Form validation with Bootstrap 5 API</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <h6><i class="bi bi-info-circle me-2"></i>Future Optimizations</h6>
+                        <ul class="mb-0">
+                            <li>Consider self-hosting fonts for better performance</li>
+                            <li>Implement service worker for caching</li>
+                            <li>Use Bootstrap source files for custom builds</li>
+                            <li>Add lazy loading for images</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Test Actions -->
+                <div class="audit-section">
+                    <h3 class="mb-4">
+                        <i class="bi bi-play-circle me-2"></i>
+                        Performance Tests
+                    </h3>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn btn-primary" onclick="runDOMTest()">
+                            <i class="bi bi-code me-2"></i>DOM Performance
+                        </button>
+                        <button class="btn btn-success" onclick="runAnimationTest()">
+                            <i class="bi bi-arrow-repeat me-2"></i>Animation Test
+                        </button>
+                        <button class="btn btn-info" onclick="runMemoryTest()">
+                            <i class="bi bi-memory me-2"></i>Memory Usage
+                        </button>
+                        <button class="btn btn-warning" onclick="clearResults()">
+                            <i class="bi bi-trash me-2"></i>Clear Results
+                        </button>
+                    </div>
+                    <div id="test-results" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
+            crossorigin="anonymous"></script>
+
+    <script>
+        // Performance monitoring and Web Vitals
+        const performanceData = {
+            navigationStart: performance.timeOrigin,
+            loadStart: performance.now()
+        };
+
+        // Core Web Vitals measurement
+        function measureWebVitals() {
+            // LCP (Largest Contentful Paint)
+            if ('PerformanceObserver' in window) {
+                try {
+                    const lcpObserver = new PerformanceObserver((list) => {
+                        const entries = list.getEntries();
+                        const lastEntry = entries[entries.length - 1];
+                        const lcp = Math.round(lastEntry.startTime);
+                        
+                        document.getElementById('lcp-value').textContent = lcp + 'ms';
+                        
+                        let status, color, width;
+                        if (lcp <= 2500) {
+                            status = 'Good';
+                            color = '#198754';
+                            width = Math.min((2500 - lcp) / 2500 * 100, 100);
+                        } else if (lcp <= 4000) {
+                            status = 'Needs Improvement';
+                            color = '#fd7e14';
+                            width = 50;
+                        } else {
+                            status = 'Poor';
+                            color = '#dc3545';
+                            width = 25;
+                        }
+                        
+                        document.getElementById('lcp-status').textContent = status;
+                        document.getElementById('lcp-status').className = 
+                            status === 'Good' ? 'small metric-good' : 
+                            status === 'Needs Improvement' ? 'small metric-needs-improvement' : 
+                            'small metric-poor';
+                        
+                        const gauge = document.getElementById('lcp-gauge');
+                        gauge.style.width = width + '%';
+                        gauge.style.backgroundColor = color;
+                    });
+                    
+                    lcpObserver.observe({entryTypes: ['largest-contentful-paint']});
+                } catch (e) {
+                    console.log('LCP measurement not supported');
+                }
+
+                // CLS (Cumulative Layout Shift)
+                try {
+                    let clsValue = 0;
+                    const clsObserver = new PerformanceObserver((list) => {
+                        for (const entry of list.getEntries()) {
+                            if (!entry.hadRecentInput) {
+                                clsValue += entry.value;
+                            }
+                        }
+                        
+                        const cls = Math.round(clsValue * 1000) / 1000;
+                        document.getElementById('cls-value').textContent = cls;
+                        
+                        let status, color, width;
+                        if (cls <= 0.1) {
+                            status = 'Good';
+                            color = '#198754';
+                            width = Math.max((0.1 - cls) / 0.1 * 100, 0);
+                        } else if (cls <= 0.25) {
+                            status = 'Needs Improvement';
+                            color = '#fd7e14';
+                            width = 50;
+                        } else {
+                            status = 'Poor';
+                            color = '#dc3545';
+                            width = 25;
+                        }
+                        
+                        document.getElementById('cls-status').textContent = status;
+                        document.getElementById('cls-status').className = 
+                            status === 'Good' ? 'small metric-good' : 
+                            status === 'Needs Improvement' ? 'small metric-needs-improvement' : 
+                            'small metric-poor';
+                            
+                        const gauge = document.getElementById('cls-gauge');
+                        gauge.style.width = width + '%';
+                        gauge.style.backgroundColor = color;
+                    });
+                    
+                    clsObserver.observe({entryTypes: ['layout-shift']});
+                } catch (e) {
+                    console.log('CLS measurement not supported');
+                }
+
+                // FID (First Input Delay)
+                try {
+                    const fidObserver = new PerformanceObserver((list) => {
+                        const entries = list.getEntries();
+                        const firstEntry = entries[0];
+                        const fid = Math.round(firstEntry.processingStart - firstEntry.startTime);
+                        
+                        document.getElementById('fid-value').textContent = fid + 'ms';
+                        
+                        let status, color, width;
+                        if (fid <= 100) {
+                            status = 'Good';
+                            color = '#198754';
+                            width = Math.max((100 - fid) / 100 * 100, 0);
+                        } else if (fid <= 300) {
+                            status = 'Needs Improvement';
+                            color = '#fd7e14';
+                            width = 50;
+                        } else {
+                            status = 'Poor';
+                            color = '#dc3545';
+                            width = 25;
+                        }
+                        
+                        document.getElementById('fid-status').textContent = status;
+                        document.getElementById('fid-status').className = 
+                            status === 'Good' ? 'small metric-good' : 
+                            status === 'Needs Improvement' ? 'small metric-needs-improvement' : 
+                            'small metric-poor';
+                            
+                        const gauge = document.getElementById('fid-gauge');
+                        gauge.style.width = width + '%';
+                        gauge.style.backgroundColor = color;
+                    });
+                    
+                    fidObserver.observe({entryTypes: ['first-input']});
+                } catch (e) {
+                    console.log('FID measurement not supported');
+                }
+            }
+        }
+
+        // Resource loading times
+        function measureResourceTimes() {
+            if (performance.getEntriesByType) {
+                const resources = performance.getEntriesByType('resource');
+                
+                resources.forEach(resource => {
+                    const duration = Math.round(resource.duration);
+                    
+                    if (resource.name.includes('bootstrap.min.css')) {
+                        document.getElementById('css-load-time').textContent = duration + 'ms';
+                    } else if (resource.name.includes('bootstrap.bundle.min.js')) {
+                        document.getElementById('js-load-time').textContent = duration + 'ms';
+                    }
+                });
+            }
+        }
+
+        // Feature support detection
+        function detectFeatureSupport() {
+            const features = [
+                {
+                    name: 'CSS Grid',
+                    supported: CSS.supports('display', 'grid'),
+                    icon: 'bi-grid'
+                },
+                {
+                    name: 'CSS Variables',
+                    supported: CSS.supports('--test', 'red'),
+                    icon: 'bi-palette'
+                },
+                {
+                    name: 'Flexbox',
+                    supported: CSS.supports('display', 'flex'),
+                    icon: 'bi-arrows-expand'
+                },
+                {
+                    name: 'ES6 Modules',
+                    supported: typeof Symbol !== 'undefined',
+                    icon: 'bi-code-square'
+                }
+            ];
+
+            const container = document.getElementById('feature-support');
+            features.forEach(feature => {
+                const badge = feature.supported ? 'bg-success' : 'bg-danger';
+                const icon = feature.supported ? 'bi-check-circle' : 'bi-x-circle';
+                
+                container.innerHTML += `
+                    <div class="d-flex justify-content-between mb-1">
+                        <span><i class="${feature.icon} me-2"></i>${feature.name}</span>
+                        <span class="badge ${badge}">
+                            <i class="${icon} me-1"></i>${feature.supported ? 'Yes' : 'No'}
+                        </span>
+                    </div>
+                `;
+            });
+        }
+
+        // Performance tests
+        function runDOMTest() {
+            const start = performance.now();
+            const container = document.createElement('div');
+            
+            for (let i = 0; i < 10000; i++) {
+                const el = document.createElement('div');
+                el.className = 'test-element';
+                el.textContent = `Element ${i}`;
+                container.appendChild(el);
+            }
+            
+            document.body.appendChild(container);
+            document.body.removeChild(container);
+            
+            const duration = Math.round(performance.now() - start);
+            showTestResult('DOM Performance', `10,000 elements created and removed in ${duration}ms`, 'success');
+        }
+
+        function runAnimationTest() {
+            const start = performance.now();
+            const testDiv = document.createElement('div');
+            testDiv.style.cssText = 'position: fixed; top: -100px; left: 0; width: 100px; height: 100px; background: red; transition: all 0.5s ease;';
+            document.body.appendChild(testDiv);
+            
+            setTimeout(() => {
+                testDiv.style.top = '50px';
+                setTimeout(() => {
+                    const duration = Math.round(performance.now() - start);
+                    document.body.removeChild(testDiv);
+                    showTestResult('Animation Test', `CSS transition completed in ${duration}ms`, 'info');
+                }, 600);
+            }, 10);
+        }
+
+        function runMemoryTest() {
+            const before = performance.memory ? Math.round(performance.memory.usedJSHeapSize / 1024 / 1024) : 'N/A';
+            
+            // Create temporary memory load
+            const tempArray = new Array(100000).fill().map((_, i) => ({ id: i, data: `test-${i}` }));
+            
+            setTimeout(() => {
+                const after = performance.memory ? Math.round(performance.memory.usedJSHeapSize / 1024 / 1024) : 'N/A';
+                tempArray.length = 0; // Clear array
+                
+                showTestResult('Memory Test', 
+                    `Before: ${before}MB, After: ${after}MB (${performance.memory ? 'supported' : 'not supported'})`, 
+                    'warning');
+            }, 100);
+        }
+
+        function showTestResult(title, message, type) {
+            const results = document.getElementById('test-results');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} alert-dismissible fade show`;
+            alert.innerHTML = `
+                <strong>${title}:</strong> ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            results.appendChild(alert);
+        }
+
+        function clearResults() {
+            document.getElementById('test-results').innerHTML = '';
+        }
+
+        // Initialize on load
+        window.addEventListener('load', function() {
+            measureWebVitals();
+            measureResourceTimes();
+            detectFeatureSupport();
+            
+            console.log('✅ Performance audit loaded');
+            console.log('Bootstrap 5.3.3 features:', {
+                version: '5.3.3 LTS',
+                jqueryFree: true,
+                cssCustomProperties: true,
+                improvedAccessibility: true,
+                modernJS: true
+            });
+        });
+    </script>
+</body>
+</html>

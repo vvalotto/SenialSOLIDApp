@@ -2,14 +2,6 @@
 
 {% block title %}Procesamiento - Señal SOLID{% endblock %}
 
-{% block breadcrumbs %}
-{% set breadcrumb_items = [
-    {'title': 'Aplicación', 'url': '#', 'icon': 'bi bi-gear-fill'},
-    {'title': 'Procesamiento', 'url': '/procesamiento/', 'icon': 'bi bi-cpu'}
-] %}
-{{ super() }}
-{% endblock %}
-
 {% block page_content %}
 <div class="container-fluid">
     <div class="row justify-content-center">
@@ -35,7 +27,7 @@
                                     <div class="card h-100 border-0 bg-light">
                                         <div class="card-body text-center">
                                             <i class="bi bi-filter text-primary fs-1 mb-3"></i>
-                                            <h2 class="card-title">Filtrado</h2>
+                                            <h5 class="card-title">Filtrado</h5>
                                             <p class="card-text text-muted">
                                                 Filtros digitales para mejorar la calidad de la señal
                                             </p>
@@ -47,7 +39,7 @@
                                     <div class="card h-100 border-0 bg-light">
                                         <div class="card-body text-center">
                                             <i class="bi bi-activity text-success fs-1 mb-3"></i>
-                                            <h2 class="card-title">Análisis</h2>
+                                            <h5 class="card-title">Análisis</h5>
                                             <p class="card-text text-muted">
                                                 Análisis espectral y temporal de señales
                                             </p>
@@ -59,7 +51,7 @@
                                     <div class="card h-100 border-0 bg-light">
                                         <div class="card-body text-center">
                                             <i class="bi bi-gear text-warning fs-1 mb-3"></i>
-                                            <h2 class="card-title">Transformación</h2>
+                                            <h5 class="card-title">Transformación</h5>
                                             <p class="card-text text-muted">
                                                 FFT, Wavelets y otras transformadas
                                             </p>

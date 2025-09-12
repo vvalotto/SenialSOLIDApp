@@ -1,0 +1,95 @@
+{% extends "general/base.html" %}
+
+{% block title %}Senial SOLID{% endblock %}
+
+{% block page_content %}
+<header class="page-header">
+    <h1 id="welcome-title" class="display-4">
+        Hola, 
+        <span class="text-primary">
+            {% if name %}{{ name }}{% else %}Visitante{% endif %}
+        </span>!
+    </h1>
+    <p class="lead text-muted">Bienvenido al sistema de procesamiento de señales SOLID</p>
+</header>
+
+<!-- Formulario mejorado con accesibilidad -->
+{% if form %}
+<section aria-labelledby="form-section-title">
+    <h2 id="form-section-title" class="visually-hidden">Formulario de entrada</h2>
+    
+    <form method="POST" role="form" 
+          aria-describedby="form-description" 
+          class="mt-4 needs-validation" 
+          novalidate>
+        {{ form.hidden_tag() }}
+        
+        <div id="form-description" class="visually-hidden">
+            Formulario para interactuar con el sistema
+        </div>
+        
+        <fieldset>
+            <legend class="visually-hidden">Datos de entrada</legend>
+            
+            {% for field in form if field.name != 'csrf_token' and field.type != 'HiddenField' and field.type != 'SubmitField' %}
+            <div class="mb-4">
+                {{ field.label(class="form-label fw-semibold", for=field.id) }}
+                <div class="input-group input-group-lg has-validation">
+                    <span class="input-group-text bg-primary text-white">
+                        <i class="bi bi-person-circle"></i>
+                    </span>
+                    {% if field.name == 'name' %}
+                        {{ field(class="form-control form-control-lg", 
+                            **{
+                                "aria-describedby": field.name + "-help",
+                                "placeholder": "Tu nombre completo",
+                                "minlength": "2",
+                                "maxlength": "50",
+                                "pattern": "[A-Za-zÀ-ÿ\\s]+",
+                                "title": "Solo letras y espacios (2-50 caracteres)"
+                            }) }}
+                    {% else %}
+                        {{ field(class="form-control form-control-lg", 
+                            **{"aria-describedby": field.name + "-help"}) }}
+                    {% endif %}
+                    <div class="invalid-feedback">
+                        {% if field.name == 'name' %}
+                            Por favor ingresa un nombre válido (2-50 caracteres, solo letras)
+                        {% else %}
+                            Este campo es requerido
+                        {% endif %}
+                    </div>
+                    <div class="valid-feedback">
+                        ¡Perfecto!
+                    </div>
+                </div>
+                <div id="{{ field.name }}-help" class="form-text">
+                    <i class="bi bi-info-circle me-1"></i>
+                    {% if field.name == 'name' %}
+                        Ingresa tu nombre para personalizar la experiencia del sistema
+                    {% else %}
+                        {{ field.label.text }}
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+            
+            {% for field in form if field.type == 'SubmitField' %}
+            <div class="d-grid gap-2">
+                {{ field(class="btn btn-primary btn-lg py-3", 
+                    **{
+                        "aria-describedby": "submit-help",
+                        "type": "submit"
+                    }) }}
+                <div id="submit-help" class="form-text text-center">
+                    <i class="bi bi-rocket me-1"></i>
+                    Envía la información para acceder al sistema
+                </div>
+            </div>
+            {% endfor %}
+        </fieldset>
+    </form>
+</section>
+{% endif %}
+{% endblock %}
+
