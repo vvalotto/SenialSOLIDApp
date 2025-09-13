@@ -1,0 +1,49 @@
+{
+  "name": "senial-solid-webapp",
+  "version": "1.8.1",
+  "description": "Senial SOLID - Frontend Performance Optimization",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --mode=production",
+    "build:dev": "webpack --mode=development",
+    "dev": "webpack serve --mode=development",
+    "optimize:images": "imagemin 01_presentacion/webapp/static/**/*.{jpg,jpeg,png} --out-dir=01_presentacion/webapp/static/optimized/",
+    "critical": "critical 01_presentacion/webapp/templates/general/base.html --base 01_presentacion/webapp/static --minify --css 01_presentacion/webapp/static/css/critical.css",
+    "audit": "lighthouse http://localhost:5000 --output html --output-path ./performance-audit.html",
+    "analyze": "webpack-bundle-analyzer dist/bundle.js"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.0",
+    "@babel/preset-env": "^7.23.0",
+    "babel-loader": "^9.1.3",
+    "compression-webpack-plugin": "^11.0.0",
+    "css-loader": "^6.8.1",
+    "css-minimizer-webpack-plugin": "^5.0.1",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.5.3",
+    "imagemin": "^8.0.1",
+    "imagemin-webp": "^8.0.0",
+    "imagemin-avif": "^0.1.6",
+    "mini-css-extract-plugin": "^2.7.6",
+    "terser-webpack-plugin": "^5.3.9",
+    "webpack": "^5.89.0",
+    "webpack-bundle-analyzer": "^4.9.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1",
+    "critical": "^6.0.0",
+    "lighthouse": "^10.4.0"
+  },
+  "dependencies": {
+    "bootstrap": "5.3.3",
+    "bootstrap-icons": "^1.11.1"
+  },
+  "keywords": [
+    "flask",
+    "bootstrap",
+    "performance",
+    "optimization",
+    "webpack"
+  ],
+  "author": "SenialSOLID Team",
+  "license": "MIT"
+}

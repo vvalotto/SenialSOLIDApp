@@ -436,9 +436,9 @@ logger.info("Loading configuration",
 ## 📚 References & Resources
 
 ### **Technical Documentation**
-- [MIGRATION_GUIDE.md](config/MIGRATION_GUIDE.md) - Complete migration instructions
-- [config_schema.yaml](config/config_schema.yaml) - Schema specification
-- [CHANGELOG.md](CHANGELOG.md) - Version history and changes
+- [MIGRATION_GUIDE.md](../config/MIGRATION_GUIDE.md) - Complete migration instructions
+- [config_schema.yaml](../config/config_schema.yaml) - Schema specification
+- [CHANGELOG.md](../CHANGELOG.md) - Version history and changes
 
 ### **External Dependencies**
 - **PyYAML 6.0.1** - YAML parsing and generation

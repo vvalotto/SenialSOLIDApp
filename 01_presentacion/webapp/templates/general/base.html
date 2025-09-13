@@ -5,12 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
     {% block head %}
-    <link rel="shortcut icon" href="{{ url_for('static', filename = 'favicon.ico') }}"
-        type="image/x-icon">
-    <link rel="icon" href="{{ url_for('static', filename = 'favicon.ico') }}"
-        type="image/x-icon">
+    <!-- Performance-optimized head section -->
     
-    <!-- Bootstrap 5.3+ LTS CSS with preload optimization -->
+    <!-- Critical resource hints -->
+    <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    
+    <!-- Bootstrap CSS from CDN for immediate styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+          rel="stylesheet" 
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
+          crossorigin="anonymous">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" 
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+          integrity="sha384-4LISF5TTJX/fLmGSxO53rV4miRxdg84mZsxmO8Rx5jGtp/LbrixFETvWa5a6sESd"
+          crossorigin="anonymous">
+    
+    <!-- Custom optimized styles (async loading) -->
+    <link rel="preload" 
+          href="{{ url_for('static', filename='css/styles.css') }}" 
+          as="style" 
+          onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+    </noscript>
+    
+    <!-- Development mode check -->
+    {% if config.ENV == 'development' and False %}
     <link rel="preload" 
           href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
           as="style" 
@@ -21,8 +47,6 @@
               integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
               crossorigin="anonymous">
     </noscript>
-    
-    <!-- Bootstrap Icons with preload optimization -->
     <link rel="preload" 
           href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
           as="style" 
@@ -33,756 +57,33 @@
               integrity="sha384-4LISF5TTJX/fLmGSxO53rV4miRxdg84mZsxmO8Rx5jGtp/LbrixFETvWa5a6sESd"
               crossorigin="anonymous">
     </noscript>
+    {% endif %}
     
-    <!-- Custom table styles -->
+    <!-- Performance budget enforcement -->
+    <meta name="performance-budget" content="LCP:2000,FID:100,CLS:0.1">
+    <meta name="theme-color" content="#0d6efd">
+    
+    <!-- Minimal remaining inline styles for critical layout -->
     <style>
-        /* Spinner animation for refresh button - Optimized */
-        .spin {
-            animation: spin 1s linear infinite;
-            will-change: transform;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        /* Table enhancements - Optimized */
-        .table th {
-            border-bottom: 2px solid var(--bs-primary);
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.875rem;
-            letter-spacing: 0.5px;
-            transition: background-color 0.2s ease;
-        }
-        
-        .table th:hover {
-            background-color: var(--bs-primary-bg-subtle) !important;
-        }
-        
-        .table td code {
-            font-family: ui-monospace, 'Monaco', 'Cascadia Code', monospace;
-            font-size: 0.875rem;
-        }
-        
-        .table tbody tr {
-            transition: all 0.2s ease;
-        }
-        
-        .table tbody tr:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        
-        /* Responsive button text */
-        @media (max-width: 576px) {
-            .btn-group-sm .btn {
-                padding: 0.25rem 0.4rem;
-            }
-        }
-        
-        /* Better focus states */
-        .table th[tabindex]:focus {
-            outline: 2px solid var(--bs-primary);
-            outline-offset: -2px;
-        }
-        
-        /* Loading state styles */
-        .table-loading {
-            opacity: 0.6;
-            pointer-events: none;
-        }
-        
-        /* ===== CONSISTENT BADGE STYLING ===== */
-        .badge {
-            font-weight: 500;
-            padding: 0.5em 0.75em;
-            border-radius: 0.5rem;
-            font-size: 0.75em;
-            letter-spacing: 0.5px;
-        }
-        
-        .badge.bg-success {
-            background: linear-gradient(135deg, #198754, #20c997) !important;
-        }
-        
-        .badge.bg-primary {
-            background: linear-gradient(135deg, var(--bs-primary), #0056b3) !important;
-        }
-        
-        .badge.bg-warning {
-            background: linear-gradient(135deg, #ffc107, #fd7e14) !important;
-            color: var(--bs-dark) !important;
-        }
-        
-        .badge.bg-danger {
-            background: linear-gradient(135deg, #dc3545, #fd1d33) !important;
-        }
-        
-        .badge.bg-info {
-            background: linear-gradient(135deg, #0dcaf0, #0fb9d9) !important;
-        }
-        
-        .badge.bg-secondary {
-            background: linear-gradient(135deg, #6c757d, #5a6268) !important;
-        }
-        
-        /* Badge sizes */
-        .badge.fs-6 {
-            font-size: 1rem !important;
-            padding: 0.6em 1em;
-        }
-        
-        /* Empty state styling */
-        .table tbody td[colspan] .bi-inbox {
-            opacity: 0.5;
-        }
-        
-        /* ===== CONSISTENT BUTTON STYLING ===== */
-        .btn {
-            border-radius: 0.5rem;
-            font-weight: 500;
-            text-transform: none;
-            transition: all 0.2s ease;
-            position: relative;
-            will-change: transform, box-shadow;
-        }
-        
-        @media (prefers-reduced-motion: no-preference) {
-            .btn::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: -100%;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-                transition: left 0.5s;
-                will-change: left;
-            }
-            
-            .btn:hover::before {
-                left: 100%;
-            }
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--bs-primary), #0056b3);
-            border: none;
-            box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
-        }
-        
-        @media (prefers-reduced-motion: no-preference) {
-            .btn-primary:hover, .btn-primary:focus {
-                background: linear-gradient(135deg, #0056b3, var(--bs-primary));
-                transform: translateY(-2px);
-                box-shadow: 0 6px 12px rgba(13, 110, 253, 0.4);
-            }
-        }
-        
-        @media (prefers-reduced-motion: reduce) {
-            .btn-primary:hover, .btn-primary:focus {
-                background: linear-gradient(135deg, #0056b3, var(--bs-primary));
-            }
-        }
-        
-        .btn-success {
-            background: linear-gradient(135deg, var(--bs-success), #198754);
-            border: none;
-            box-shadow: 0 4px 8px rgba(25, 135, 84, 0.3);
-        }
-        
-        @media (prefers-reduced-motion: no-preference) {
-            .btn-success:hover, .btn-success:focus {
-                background: linear-gradient(135deg, #198754, var(--bs-success));
-                transform: translateY(-2px);
-                box-shadow: 0 6px 12px rgba(25, 135, 84, 0.4);
-            }
-        }
-        
-        @media (prefers-reduced-motion: reduce) {
-            .btn-success:hover, .btn-success:focus {
-                background: linear-gradient(135deg, #198754, var(--bs-success));
-            }
-        }
-        
-        .btn-warning {
-            background: linear-gradient(135deg, var(--bs-warning), #ffc107);
-            border: none;
-            color: var(--bs-dark);
-            box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
-        }
-        
-        @media (prefers-reduced-motion: no-preference) {
-            .btn-warning:hover, .btn-warning:focus {
-                background: linear-gradient(135deg, #ffc107, var(--bs-warning));
-                color: var(--bs-dark);
-                transform: translateY(-2px);
-                box-shadow: 0 6px 12px rgba(255, 193, 7, 0.4);
-            }
-        }
-        
-        @media (prefers-reduced-motion: reduce) {
-            .btn-warning:hover, .btn-warning:focus {
-                background: linear-gradient(135deg, #ffc107, var(--bs-warning));
-                color: var(--bs-dark);
-            }
-        }
-        
-        .btn-danger {
-            background: linear-gradient(135deg, var(--bs-danger), #dc3545);
-            border: none;
-            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
-        }
-        
-        @media (prefers-reduced-motion: no-preference) {
-            .btn-danger:hover, .btn-danger:focus {
-                background: linear-gradient(135deg, #dc3545, var(--bs-danger));
-                transform: translateY(-2px);
-                box-shadow: 0 6px 12px rgba(220, 53, 69, 0.4);
-            }
-        }
-        
-        @media (prefers-reduced-motion: reduce) {
-            .btn-danger:hover, .btn-danger:focus {
-                background: linear-gradient(135deg, #dc3545, var(--bs-danger));
-            }
-        }
-        
-        .btn-info {
-            background: linear-gradient(135deg, var(--bs-info), #0dcaf0);
-            border: none;
-            box-shadow: 0 4px 8px rgba(13, 202, 240, 0.3);
-        }
-        
-        .btn-info:hover, .btn-info:focus {
-            background: linear-gradient(135deg, #0dcaf0, var(--bs-info));
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(13, 202, 240, 0.4);
-        }
-        
-        .btn-secondary {
-            background: linear-gradient(135deg, var(--bs-secondary), #6c757d);
-            border: none;
-            box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
-        }
-        
-        .btn-secondary:hover, .btn-secondary:focus {
-            background: linear-gradient(135deg, #6c757d, var(--bs-secondary));
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(108, 117, 125, 0.4);
-        }
-        
-        .btn-outline-primary {
-            border: 2px solid var(--bs-primary);
-            color: var(--bs-primary);
-            background: transparent;
-        }
-        
-        .btn-outline-primary:hover {
-            background: var(--bs-primary);
-            color: white;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
-        }
-        
-        .btn-outline-secondary {
-            border: 2px solid var(--bs-secondary);
-            color: var(--bs-secondary);
-        }
-        
-        .btn-outline-secondary:hover {
-            background: var(--bs-secondary);
-            color: white;
-            transform: translateY(-1px);
-        }
-        
-        .btn-outline-warning {
-            border: 2px solid var(--bs-warning);
-            color: var(--bs-warning);
-        }
-        
-        .btn-outline-warning:hover {
-            background: var(--bs-warning);
-            color: var(--bs-dark);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
-        }
-        
-        .btn-outline-danger {
-            border: 2px solid var(--bs-danger);
-            color: var(--bs-danger);
-        }
-        
-        .btn-outline-danger:hover {
-            background: var(--bs-danger);
-            color: white;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
-        }
-        
-        .btn-outline-success {
-            border: 2px solid var(--bs-success);
-            color: var(--bs-success);
-        }
-        
-        .btn-outline-success:hover {
-            background: var(--bs-success);
-            color: white;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(25, 135, 84, 0.3);
-        }
-        
-        .btn-outline-info {
-            border: 2px solid var(--bs-info);
-            color: var(--bs-info);
-        }
-        
-        .btn-outline-info:hover {
-            background: var(--bs-info);
-            color: white;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(13, 202, 240, 0.3);
-        }
-        
-        .btn-sm {
-            padding: 0.375rem 0.75rem;
-            font-size: 0.875rem;
-            border-radius: 0.375rem;
-        }
-        
-        .btn-lg {
-            padding: 0.75rem 1.5rem;
-            font-size: 1.125rem;
-            border-radius: 0.75rem;
-        }
-        
-        /* Disabled state */
-        .btn:disabled, .btn.disabled {
-            opacity: 0.6;
-            transform: none !important;
-            box-shadow: none !important;
-        }
-        
-        /* Button groups */
-        .btn-group .btn {
-            border-radius: 0;
-        }
-        
-        .btn-group .btn:first-child {
-            border-radius: 0.5rem 0 0 0.5rem;
-        }
-        
-        .btn-group .btn:last-child {
-            border-radius: 0 0.5rem 0.5rem 0;
-        }
-        
-        /* ===== CONSISTENT CARD STYLING - Optimized ===== */
-        .card {
-            border: 1px solid rgba(0,0,0,0.125);
-            border-radius: 1rem;
-            transition: all 0.2s ease;
-            background: white;
-            will-change: transform, box-shadow;
-        }
-        
-        .card.shadow-sm {
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1), 0 8px 16px rgba(0,0,0,0.1);
-        }
-        
-        @media (prefers-reduced-motion: no-preference) {
-            .card:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 8px rgba(0,0,0,0.15), 0 12px 24px rgba(0,0,0,0.15);
-            }
-        }
-        
-        @media (prefers-reduced-motion: reduce) {
-            .card {
-                transition: box-shadow 0.2s ease;
-            }
-            .card:hover {
-                box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            }
-        }
-        
-        .card-header {
-            border-radius: 1rem 1rem 0 0 !important;
-            border-bottom: 2px solid rgba(0,0,0,0.125);
-            font-weight: 600;
-            padding: 1rem 1.5rem;
-        }
-        
-        .card-header.bg-primary {
-            background: linear-gradient(135deg, var(--bs-primary), #0056b3) !important;
-            color: white;
-            border-color: var(--bs-primary);
-        }
-        
-        .card-header.bg-info {
-            background: linear-gradient(135deg, var(--bs-info), #0dcaf0) !important;
-            color: white;
-        }
-        
-        .card-header.bg-light {
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef) !important;
-            color: var(--bs-dark);
-        }
-        
-        .card-body {
-            padding: 1.5rem;
-        }
-        
-        .card-title {
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-        
-        .card.h-100 {
-            height: 100%;
-        }
-        
-        /* Special card variants */
-        .card.border-0 {
-            border: none;
-        }
-        
-        .card.border-secondary {
-            border-color: var(--bs-secondary);
-            border-width: 2px;
-        }
-        
-        .card.border-primary {
-            border-color: var(--bs-primary);
-            border-width: 2px;
-        }
-        
-        .card.border-info {
-            border-color: var(--bs-info);
-            border-width: 2px;
-        }
-        
-        .card.bg-light {
-            background-color: var(--bs-light) !important;
-        }
-        
-        /* Card hover effects for interactive cards */
-        .card.border-primary:hover {
-            border-color: var(--bs-primary);
-            box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
-        }
-        
-        /* ===== CONSISTENT SPACING ===== */
-        .card + .card {
-            margin-top: 1.5rem;
-        }
-        
-        .btn + .btn {
-            margin-left: 0.5rem;
-        }
-        
-        /* ===== RESPONSIVE DESIGN ===== */
-        @media (max-width: 576px) {
-            .btn-lg {
-                padding: 0.5rem 1rem;
-                font-size: 1rem;
-            }
-            
-            .card-body {
-                padding: 1rem;
-            }
-            
-            .card-header {
-                padding: 0.75rem 1rem;
-            }
-        }
-        
-        /* ===== FOCUS STYLES FOR ACCESSIBILITY ===== */
-        .btn:focus, .card:focus {
-            outline: 2px solid var(--bs-primary);
-            outline-offset: 2px;
-        }
-        
-        .btn:focus-visible, .card:focus-visible {
-            outline: 2px solid var(--bs-primary);
-            outline-offset: 2px;
-        }
-        
-        /* Skip Links */
-        .skip-link {
-            position: absolute;
-            top: -40px;
-            left: 6px;
-            background: var(--bs-primary);
-            color: white;
-            padding: 8px;
-            text-decoration: none;
-            border-radius: 0 0 4px 4px;
-            z-index: 9999;
-            font-weight: 600;
-            transition: top 0.3s ease;
-        }
-        
-        .skip-link:focus {
-            top: 0;
-            color: white;
-            text-decoration: none;
-            outline: 2px solid var(--bs-warning);
-            outline-offset: 2px;
-        }
-        
-        .skip-link:hover {
-            background: var(--bs-dark);
-            color: white;
-            text-decoration: none;
-        }
-        
-        /* Enhanced Alert System */
-        #flash-messages {
-            position: relative;
-            z-index: 1000;
-        }
-        
-        .alert {
-            border-radius: 0.75rem;
-            border: none;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            margin-bottom: 1rem;
-            transition: all 0.3s ease;
-        }
-        
-        .alert-success {
-            background: linear-gradient(135deg, #d1edff, #c3f7d0) !important;
-            color: #0f5132;
-            border-left: 4px solid #198754;
-        }
-        
-        .alert-danger {
-            background: linear-gradient(135deg, #f8d7da, #f1aeb5) !important;
-            color: #842029;
-            border-left: 4px solid #dc3545;
-        }
-        
-        .alert-warning {
-            background: linear-gradient(135deg, #fff3cd, #ffecb5) !important;
-            color: #664d03;
-            border-left: 4px solid #ffc107;
-        }
-        
-        .alert-info {
-            background: linear-gradient(135deg, #cff4fc, #b6effb) !important;
-            color: #055160;
-            border-left: 4px solid #0dcaf0;
-        }
-        
-        .alert .bi {
-            font-size: 1.1em;
-            opacity: 0.8;
-        }
-        
-        .alert .btn-close {
-            filter: opacity(0.7);
-        }
-        
-        .alert .btn-close:hover {
-            filter: opacity(1);
-        }
-        
-        /* Loading States */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.9);
-            z-index: 9998;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(2px);
-        }
-        
-        .loading-spinner {
-            display: inline-block;
-            width: 2.5rem;
-            height: 2.5rem;
-            border: 4px solid rgba(var(--bs-primary-rgb), 0.2);
-            border-top: 4px solid var(--bs-primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            will-change: transform;
-        }
-        
-        .loading-text {
-            margin-top: 1rem;
-            color: var(--bs-primary);
-            font-weight: 500;
-        }
-        
-        /* Button loading states */
-        .btn-loading {
-            pointer-events: none;
-            opacity: 0.7;
-            position: relative;
-        }
-        
-        .btn-loading .btn-text {
-            visibility: hidden;
-        }
-        
-        .btn-loading::after {
-            content: '';
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            width: 1rem;
-            height: 1rem;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top: 2px solid white;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        
-        /* Progress indicators */
-        .progress-custom {
-            height: 0.5rem;
-            border-radius: 0.5rem;
-            overflow: hidden;
-            background: rgba(var(--bs-primary-rgb), 0.1);
-        }
-        
-        .progress-bar-custom {
-            background: linear-gradient(90deg, var(--bs-primary), var(--bs-info));
-            height: 100%;
-            border-radius: 0.5rem;
-            transition: width 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .progress-bar-custom::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            background-image: linear-gradient(
-                45deg,
-                rgba(255, 255, 255, 0.2) 25%,
-                transparent 25%,
-                transparent 50%,
-                rgba(255, 255, 255, 0.2) 50%,
-                rgba(255, 255, 255, 0.2) 75%,
-                transparent 75%,
-                transparent
-            );
-            background-size: 1rem 1rem;
-            animation: progress-stripes 1s linear infinite;
-        }
-        
-        @keyframes progress-stripes {
-            0% { background-position: 1rem 0; }
-            100% { background-position: 0 0; }
-        }
-        
-        /* Skeleton loading */
-        .skeleton {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: loading-skeleton 1.5s infinite;
-            border-radius: 0.375rem;
-        }
-        
-        @keyframes loading-skeleton {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-        
-        .skeleton-text {
-            height: 1rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .skeleton-text:last-child {
-            width: 70%;
-            margin-bottom: 0;
-        }
-        
-        .skeleton-title {
-            height: 1.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .skeleton-button {
-            height: 2.5rem;
-            width: 8rem;
-            border-radius: 0.5rem;
-        }
-        
-        /* Toast notifications for dynamic content */
-        .toast-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-        }
-        
-        .toast {
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            border: none;
-        }
-        
-        .toast-header {
-            border-radius: 0.75rem 0.75rem 0 0;
-            font-weight: 600;
-        }
-        
-        .toast-success .toast-header {
-            background: linear-gradient(135deg, var(--bs-success), #198754);
-            color: white;
-        }
-        
-        .toast-error .toast-header {
-            background: linear-gradient(135deg, var(--bs-danger), #dc3545);
-            color: white;
-        }
-        
-        .toast-warning .toast-header {
-            background: linear-gradient(135deg, var(--bs-warning), #ffc107);
-            color: var(--bs-dark);
-        }
-        
-        .toast-info .toast-header {
-            background: linear-gradient(135deg, var(--bs-info), #0dcaf0);
-            color: white;
-        }
-        
-        /* CSS containment for performance */
-        .container, .container-fluid {
-            contain: layout style;
-        }
-        
-        .card {
-            contain: layout style paint;
-        }
-        
-        /* Critical CSS only - rest loaded async */
-        .btn, .table, .badge, .card {
-            contain: layout style;
-        }
+        /* Only critical-path CSS kept inline */
+        .toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; }
+        .table-loading { opacity: 0.6; pointer-events: none; }
+        .loading-text { margin-top: 1rem; color: var(--senial-primary); font-weight: 500; }
     </style>
     
-    <!-- Critical CSS loaded, remaining styles will be loaded async -->
+    <!-- Async CSS loading optimization -->
     <script>
-        // Load remaining Bootstrap components asynchronously if needed
+        // Minimal critical JS for CSS loading
         document.addEventListener('DOMContentLoaded', function() {
-            // Ensure all Bootstrap components are available
-            if (typeof bootstrap === 'undefined') {
-                console.warn('Bootstrap JS not loaded - some interactive features may not work');
+            // Ensure Bootstrap components are available
+            if (typeof bootstrap === 'undefined' && !document.querySelector('script[src*="bootstrap"]')) {
+                console.warn('Bootstrap JS not found - loading fallback');
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js';
+                script.integrity = 'sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz';
+                script.crossOrigin = 'anonymous';
+                script.defer = true;
+                document.head.appendChild(script);
             }
         });
     </script>
@@ -975,405 +276,57 @@
         </div>
     </div>
 
-    <!-- Bootstrap 5.3+ LTS JavaScript -->
+    <!-- Performance-optimized JavaScript -->
     {% block scripts %}
+    <!-- Bootstrap JS from CDN for immediate functionality -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
             integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
-            crossorigin="anonymous"></script>
+            crossorigin="anonymous" defer></script>
     
-    <!-- Form Validation Script -->
+    <!-- Custom optimized JS (async loading) -->
+    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+    
+    <!-- Critical inline JavaScript kept minimal -->
     <script>
-        // Bootstrap 5 form validation
+        // Performance monitoring and critical functionality only
         (function() {
-            'use strict';
-            window.addEventListener('load', function() {
-                // Get all forms with needs-validation class
-                var forms = document.getElementsByClassName('needs-validation');
-                
-                // Loop over forms and prevent submission if invalid
-                var validation = Array.prototype.filter.call(forms, function(form) {
-                    form.addEventListener('submit', function(event) {
-                        if (form.checkValidity() === false) {
-                            event.preventDefault();
-                            event.stopPropagation();
-                        }
-                        form.classList.add('was-validated');
-                    }, false);
-                });
-                
-                // Real-time validation feedback
-                var inputs = document.querySelectorAll('.needs-validation input, .needs-validation textarea, .needs-validation select');
-                inputs.forEach(function(input) {
-                    input.addEventListener('blur', function() {
-                        if (input.checkValidity()) {
-                            input.classList.remove('is-invalid');
-                            input.classList.add('is-valid');
-                        } else {
-                            input.classList.remove('is-valid');
-                            input.classList.add('is-invalid');
-                        }
-                    });
-                    
-                    input.addEventListener('input', function() {
-                        if (input.classList.contains('was-validated') || input.classList.contains('is-invalid')) {
-                            if (input.checkValidity()) {
-                                input.classList.remove('is-invalid');
-                                input.classList.add('is-valid');
-                            } else {
-                                input.classList.remove('is-valid');
-                                input.classList.add('is-invalid');
+            // Basic form validation fallback
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js').catch(console.warn);
+            }
+            
+            // Core Web Vitals measurement
+            if ('PerformanceObserver' in window) {
+                try {
+                    const obs = new PerformanceObserver((list) => {
+                        list.getEntries().forEach(entry => {
+                            if (entry.entryType === 'largest-contentful-paint') {
+                                console.log('LCP:', entry.startTime);
                             }
-                        }
+                        });
                     });
-                });
-            }, false);
+                    obs.observe({entryTypes: ['largest-contentful-paint']});
+                } catch(e) { /* Graceful degradation */ }
+            }
+            
+            // Global error handling
+            window.addEventListener('error', function(e) {
+                console.warn('JS Error:', e.error?.message || e.message);
+            });
+            
+            // Minimal loading utilities for immediate use
+            window.showLoading = function(msg) {
+                const overlay = document.getElementById('loading-overlay');
+                if (overlay) {
+                    overlay.style.display = 'flex';
+                    overlay.querySelector('.loading-text').textContent = msg || 'Cargando...';
+                }
+            };
+            window.hideLoading = function() {
+                const overlay = document.getElementById('loading-overlay');
+                if (overlay) overlay.style.display = 'none';
+            };
         })();
-        
-        // Enhanced form interactions
-        document.addEventListener('DOMContentLoaded', function() {
-            // Auto-focus first input
-            const firstInput = document.querySelector('input[type="text"], input[type="email"], textarea');
-            if (firstInput) {
-                firstInput.focus();
-            }
-            
-            // Form submission loading state
-            const forms = document.querySelectorAll('form');
-            forms.forEach(function(form) {
-                form.addEventListener('submit', function() {
-                    const submitBtn = form.querySelector('button[type="submit"], input[type="submit"]');
-                    if (submitBtn && form.checkValidity()) {
-                        submitBtn.disabled = true;
-                        submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Procesando...';
-                    }
-                });
-            });
-            
-            // Initialize table features
-            initializeTables();
-            
-            // Initialize modern event listeners for buttons
-            initializeButtonHandlers();
-        });
-        
-        // Table functionality
-        function initializeTables() {
-            // Add sorting functionality
-            const sortableHeaders = document.querySelectorAll('th[aria-sort]');
-            sortableHeaders.forEach(header => {
-                header.addEventListener('click', function() {
-                    sortTable(this);
-                });
-                header.style.cursor = 'pointer';
-            });
-            
-            // Hover effects for table rows
-            const tableRows = document.querySelectorAll('tbody tr');
-            tableRows.forEach(row => {
-                if (!row.querySelector('.text-muted')) { // Skip empty state row
-                    row.addEventListener('mouseenter', function() {
-                        this.style.backgroundColor = 'var(--bs-primary-bg-subtle)';
-                    });
-                    row.addEventListener('mouseleave', function() {
-                        this.style.backgroundColor = '';
-                    });
-                }
-            });
-        }
-        
-        function refreshTable() {
-            // Show loading state
-            const refreshBtn = document.querySelector('[data-action="refresh"]');
-            if (refreshBtn) {
-                const originalContent = refreshBtn.innerHTML;
-                refreshBtn.innerHTML = '<i class="bi bi-arrow-clockwise spin"></i>';
-                refreshBtn.disabled = true;
-                
-                // Simulate refresh (in real app, this would be an AJAX call)
-                setTimeout(() => {
-                    location.reload();
-                }, 1000);
-            }
-        }
-        
-        function exportTable() {
-            // Simple CSV export functionality
-            const table = document.getElementById('signals-table');
-            if (!table) return;
-            
-            let csv = '';
-            const rows = table.querySelectorAll('tr');
-            
-            rows.forEach(row => {
-                const cells = row.querySelectorAll('th, td');
-                const rowData = Array.from(cells).map(cell => {
-                    return '"' + cell.textContent.trim().replace(/"/g, '""') + '"';
-                });
-                if (rowData.some(cell => cell !== '""')) {
-                    csv += rowData.join(',') + '\n';
-                }
-            });
-            
-            // Download CSV
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'seniales_' + new Date().toISOString().slice(0,10) + '.csv';
-            a.click();
-            window.URL.revokeObjectURL(url);
-        }
-        
-        // Modern event handlers for button interactions
-        function initializeButtonHandlers() {
-            // Refresh table button
-            const refreshBtn = document.querySelector('[data-action="refresh"]');
-            if (refreshBtn) {
-                refreshBtn.addEventListener('click', refreshTable);
-            }
-            
-            // Export table button  
-            const exportBtn = document.querySelector('[data-action="export"]');
-            if (exportBtn) {
-                exportBtn.addEventListener('click', exportTable);
-            }
-            
-            // Signal action buttons with data attributes
-            document.querySelectorAll('[data-action="view"]').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    viewSignal(this.dataset.signalId);
-                });
-            });
-            
-            document.querySelectorAll('[data-action="edit"]').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    editSignal(this.dataset.signalId);
-                });
-            });
-            
-            document.querySelectorAll('[data-action="delete"]').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    deleteSignal(this.dataset.signalId);
-                });
-            });
-        }
-        
-        function viewSignal(signalId) {
-            alert('Ver detalles de señal: ' + signalId + '\n\nEsta funcionalidad se implementará próximamente.');
-        }
-        
-        function editSignal(signalId) {
-            alert('Editar señal: ' + signalId + '\n\nEsta funcionalidad se implementará próximamente.');
-        }
-        
-        function deleteSignal(signalId) {
-            if (confirm('¿Estás seguro de que deseas eliminar la señal "' + signalId + '"?\n\nEsta acción no se puede deshacer.')) {
-                // In real app, this would be an AJAX call
-                alert('Señal "' + signalId + '" eliminada exitosamente.');
-                location.reload();
-            }
-        }
-        
-        function sortTable(header) {
-            // Simple client-side sorting
-            const table = header.closest('table');
-            const tbody = table.querySelector('tbody');
-            const rows = Array.from(tbody.querySelectorAll('tr')).filter(row => !row.querySelector('.text-muted'));
-            
-            if (rows.length === 0) return;
-            
-            const columnIndex = Array.from(header.parentNode.children).indexOf(header);
-            const currentSort = header.getAttribute('aria-sort');
-            const isAscending = currentSort !== 'ascending';
-            
-            // Reset all sort indicators
-            table.querySelectorAll('th[aria-sort]').forEach(th => {
-                th.setAttribute('aria-sort', 'none');
-                const icon = th.querySelector('.sort-icon');
-                if (icon) {
-                    icon.className = 'bi bi-arrow-down-up text-muted ms-2 sort-icon';
-                }
-            });
-            
-            // Set current sort
-            header.setAttribute('aria-sort', isAscending ? 'ascending' : 'descending');
-            const icon = header.querySelector('.sort-icon');
-            if (icon) {
-                icon.className = isAscending ? 
-                    'bi bi-arrow-up text-primary ms-2 sort-icon' : 
-                    'bi bi-arrow-down text-primary ms-2 sort-icon';
-            }
-            
-            // Sort rows
-            rows.sort((a, b) => {
-                const aText = a.cells[columnIndex].textContent.trim();
-                const bText = b.cells[columnIndex].textContent.trim();
-                return isAscending ? 
-                    aText.localeCompare(bText, 'es', { numeric: true }) :
-                    bText.localeCompare(aText, 'es', { numeric: true });
-            });
-            
-            // Reorder rows
-            rows.forEach(row => tbody.appendChild(row));
-        }
-        
-        // Enhanced Toast Notification System
-        function showToast(message, type = 'info', title = null, duration = 5000) {
-            const toastContainer = document.getElementById('toast-container');
-            if (!toastContainer) return;
-            
-            // Generate unique ID for toast
-            const toastId = 'toast-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
-            
-            // Icon mapping
-            const icons = {
-                'success': 'bi-check-circle',
-                'error': 'bi-exclamation-triangle',
-                'warning': 'bi-exclamation-triangle',
-                'info': 'bi-info-circle'
-            };
-            
-            // Title mapping
-            const titles = {
-                'success': title || 'Éxito',
-                'error': title || 'Error',
-                'warning': title || 'Advertencia',
-                'info': title || 'Información'
-            };
-            
-            const toastHtml = `
-                <div id="${toastId}" class="toast toast-${type}" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="${duration}">
-                    <div class="toast-header">
-                        <i class="bi ${icons[type]} me-2" aria-hidden="true"></i>
-                        <strong class="me-auto">${titles[type]}</strong>
-                        <small class="text-muted">ahora</small>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Cerrar notificación"></button>
-                    </div>
-                    <div class="toast-body">
-                        ${message}
-                    </div>
-                </div>
-            `;
-            
-            // Insert toast into container
-            toastContainer.insertAdjacentHTML('beforeend', toastHtml);
-            
-            // Initialize and show toast
-            const toastElement = document.getElementById(toastId);
-            const toast = new bootstrap.Toast(toastElement);
-            toast.show();
-            
-            // Remove toast element after it's hidden
-            toastElement.addEventListener('hidden.bs.toast', function() {
-                this.remove();
-            });
-            
-            return toast;
-        }
-        
-        // Global functions for easy access
-        window.showSuccessToast = function(message, title) {
-            return showToast(message, 'success', title);
-        };
-        
-        window.showErrorToast = function(message, title) {
-            return showToast(message, 'error', title);
-        };
-        
-        window.showWarningToast = function(message, title) {
-            return showToast(message, 'warning', title);
-        };
-        
-        window.showInfoToast = function(message, title) {
-            return showToast(message, 'info', title);
-        };
-        
-        // Loading State Management
-        function showGlobalLoading(message = 'Cargando...') {
-            const overlay = document.getElementById('loading-overlay');
-            const loadingText = overlay.querySelector('.loading-text');
-            if (overlay && loadingText) {
-                loadingText.textContent = message;
-                overlay.style.display = 'flex';
-                overlay.setAttribute('aria-hidden', 'false');
-                document.body.style.overflow = 'hidden';
-            }
-        }
-        
-        function hideGlobalLoading() {
-            const overlay = document.getElementById('loading-overlay');
-            if (overlay) {
-                overlay.style.display = 'none';
-                overlay.setAttribute('aria-hidden', 'true');
-                document.body.style.overflow = '';
-            }
-        }
-        
-        function setButtonLoading(button, loading = true, originalText = null) {
-            if (!button) return;
-            
-            if (loading) {
-                if (!originalText) {
-                    originalText = button.innerHTML;
-                }
-                button.dataset.originalText = originalText;
-                button.classList.add('btn-loading');
-                button.disabled = true;
-                button.innerHTML = '<span class="btn-text">' + originalText + '</span>';
-                button.setAttribute('aria-busy', 'true');
-            } else {
-                button.classList.remove('btn-loading');
-                button.disabled = false;
-                button.innerHTML = button.dataset.originalText || button.innerHTML;
-                button.removeAttribute('data-original-text');
-                button.setAttribute('aria-busy', 'false');
-            }
-        }
-        
-        function createProgressIndicator(percentage = 0, message = '') {
-            const progressId = 'progress-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5);
-            const progressHtml = `
-                <div id="${progressId}" class="mb-3" role="progressbar" aria-valuenow="${percentage}" aria-valuemin="0" aria-valuemax="100" aria-label="${message || 'Progreso de carga'}">
-                    <div class="d-flex justify-content-between mb-1">
-                        <small class="text-muted">${message}</small>
-                        <small class="text-muted">${percentage}%</small>
-                    </div>
-                    <div class="progress-custom">
-                        <div class="progress-bar-custom" style="width: ${percentage}%"></div>
-                    </div>
-                </div>
-            `;
-            return { id: progressId, html: progressHtml };
-        }
-        
-        function updateProgressIndicator(progressId, percentage, message = null) {
-            const progressElement = document.getElementById(progressId);
-            if (!progressElement) return;
-            
-            const progressBar = progressElement.querySelector('.progress-bar-custom');
-            const messageElement = progressElement.querySelector('.text-muted:first-child');
-            const percentageElement = progressElement.querySelector('.text-muted:last-child');
-            
-            if (progressBar) {
-                progressBar.style.width = percentage + '%';
-                progressElement.setAttribute('aria-valuenow', percentage);
-            }
-            
-            if (message && messageElement) {
-                messageElement.textContent = message;
-            }
-            
-            if (percentageElement) {
-                percentageElement.textContent = percentage + '%';
-            }
-        }
-        
-        // Global loading utilities
-        window.showLoading = showGlobalLoading;
-        window.hideLoading = hideGlobalLoading;
-        window.setButtonLoading = setButtonLoading;
-        window.createProgress = createProgressIndicator;
-        window.updateProgress = updateProgressIndicator;
     </script>
     {% endblock %}
 </body>

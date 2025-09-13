@@ -192,6 +192,12 @@ htmlcov/
 # Profiling
 *.prof
 
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
 # Project specific ignores
 # Keep these patterns for SenialSOLIDApp legacy compatibility
 03_aplicacion/datos/*.xml
