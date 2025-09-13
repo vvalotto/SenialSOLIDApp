@@ -1,6 +1,6 @@
 {
   "name": "senial-solid-webapp",
-  "version": "1.5.0",
+  "version": "1.8.1",
   "description": "Senial SOLID - Frontend Performance Optimization",
   "main": "index.js",
   "scripts": {
