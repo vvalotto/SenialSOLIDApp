@@ -6,6 +6,9 @@ o que cambiando solo las clases de alto nivel que pueda "armar" la solucion
 """
 from abc import ABCMeta, abstractmethod
 from modelo.senial import *
+from config.logging_config import get_logger
+
+logger = get_logger(__name__)
 
 
 class BaseProcesador(metaclass=ABCMeta):
@@ -46,9 +49,10 @@ class Procesador(BaseProcesador):
         :param senial:
         :return:
         """
-        print("Procesando...")
+        logger.info("Iniciando procesamiento simple (doble)", extra={"senial_id": getattr(senial, 'id', 'unknown'), "cantidad_valores": senial.cantidad})
         for i in range(0, senial.cantidad):
             self._senial_procesada.poner_valor(self._funcion_doble(senial.obtener_valor(i)))
+        logger.info("Procesamiento simple completado", extra={"valores_procesados": senial.cantidad})
         return
 
 
@@ -80,9 +84,10 @@ class ProcesadorConUmbral(BaseProcesador):
         :param senial:
         :return:
         """
-        print("Procesando con umbral")
+        logger.info("Iniciando procesamiento con umbral", extra={"senial_id": getattr(senial, 'id', 'unknown'), "umbral": self._umbral, "cantidad_valores": senial.cantidad})
         for i in range(0, senial.cantidad):
             self._senial_procesada.poner_valor(self._funcion_umbral(senial.obtener_valor(i)))
+        logger.info("Procesamiento con umbral completado", extra={"valores_procesados": senial.cantidad, "umbral": self._umbral})
         return
 
     def _funcion_umbral(self, valor):

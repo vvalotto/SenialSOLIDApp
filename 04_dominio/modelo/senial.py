@@ -10,6 +10,9 @@ estructuras de las seniales y resuelve la violacion de los principio OCP y LSP
 from abc import ABCMeta, abstractmethod
 from collections import deque
 import datetime
+from config.logging_config import get_logger
+
+logger = get_logger(__name__)
 
 
 class SenialBase(metaclass=ABCMeta):
@@ -111,8 +114,8 @@ class SenialBase(metaclass=ABCMeta):
         try:
             valor = self._valores[indice]
             return valor
-        except Exception:
-            print("Error: ", Exception.__cause__)
+        except Exception as e:
+            logger.error("Error obteniendo valor por índice", extra={"indice": indice, "cantidad": self._cantidad}, exc_info=True)
             return None
 
     def __str__(self):
@@ -141,7 +144,7 @@ class Senial(SenialBase):
             self._valores.append(valor)
             self._cantidad += 1
         else:
-            print('No se pueden poner mas datos')
+            logger.warning("Capacidad de señal excedida", extra={"cantidad_actual": self._cantidad, "tamanio_maximo": self._tamanio})
         return
 
     def sacar_valor(self, indice):
@@ -157,7 +160,7 @@ class Senial(SenialBase):
 
             return valor
         else:
-            print('No hay nada para sacar')
+            logger.warning("Intento de extraer valor de señal vacía", extra={"cantidad": self._cantidad})
         return valor
 
 
@@ -173,8 +176,8 @@ class SenialPila(Senial):
             valor = self._valores.pop()
             self._cantidad -= 1
             return valor
-        except Exception('No hay nada para sacar'):
-            print(Exception)
+        except Exception as e:
+            logger.warning("No hay elementos en la pila para extraer", extra={"cantidad": self._cantidad})
         return valor
 
 
@@ -192,13 +195,17 @@ class SenialCola(Senial):
         try:
             valor = self._valores.popleft()
             self._cantidad -= 1
-        except Exception('No hay nada para sacar'):
-            print(Exception)
+        except Exception as e:
+            logger.warning("No hay elementos en la cola para extraer", extra={"cantidad": self._cantidad})
         return valor
 
 
 if __name__ == "__main__":
+    # Configurar logging para prueba
+    from config.logging_config import setup_logging
+    setup_logging()
+
     s = SenialPila()
     s.id = '100'
     s._fecha_adquisicion = datetime.datetime.now()
-    print(s)
+    logger.info("Prueba de señal creada", extra={"senial_info": str(s)})
