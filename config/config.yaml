@@ -26,6 +26,21 @@ processing:
     size: 20  # ${PROC_SIGNAL_SIZE:-20}
 storage:
   context_type: ${STORAGE_CONTEXT:-archivo}
+logging:
+  level: ${LOG_LEVEL:-INFO}
+  format: json  # json | text
+  console_output: ${LOG_CONSOLE:-true}
+  file_output: ${LOG_FILE:-true}
+  directory: ${LOG_DIR:-logs}
+  rotation:
+    max_file_size_mb: ${LOG_MAX_SIZE:-10}
+    backup_count: ${LOG_BACKUP_COUNT:-5}
+  modules:
+    "03_aplicacion": INFO
+    "04_dominio": INFO
+    "05_Infraestructura": INFO
+    "01_presentacion": INFO
+    "config": DEBUG
 environments:
   development:
     paths:
@@ -36,12 +51,18 @@ environments:
       signal:
         size: 10
     debug: true
+    logging:
+      level: DEBUG
+      console_output: true
   testing:
     paths:
       base_data_dir: datos/test
     processing:
       threshold: 10
     debug: false
+    logging:
+      level: WARNING
+      console_output: false
   production:
     paths:
       base_data_dir: ${PROD_DATA_DIR:-datos/entrada/}
@@ -51,4 +72,7 @@ environments:
       signal:
         size: 20  # ${PROD_SIGNAL_SIZE:-20}
     debug: false
-    logging_level: INFO
+    logging:
+      level: INFO
+      console_output: false
+      file_output: true

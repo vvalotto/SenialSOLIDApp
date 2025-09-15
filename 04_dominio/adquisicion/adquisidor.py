@@ -5,6 +5,9 @@ from abc import ABCMeta, abstractmethod
 from modelo.senial import *
 from utilidades.trazador import *
 import math
+from config.logging_config import get_logger
+
+logger = get_logger(__name__)
 
 
 class BaseAdquisidor(BaseTrazador, metaclass=ABCMeta):
@@ -71,7 +74,7 @@ class AdquisidorSimple(BaseAdquisidor):
                 dato = float(input('Valor:'))
                 break
             except ValueError:
-                print('Dato mal ingresado, <enter>')
+                logger.warning("Entrada inválida: se esperaba número")
             finally:
                 return dato
 
@@ -80,10 +83,11 @@ class AdquisidorSimple(BaseAdquisidor):
         llena la coleccion de valores de la senial desde el teclado
         :return:
         """
-        print("Lectura de la senial")
+        logger.info("Iniciando lectura de señal desde teclado", extra={"tamanio": self._senial.tamanio})
         for i in range(0, self._senial.tamanio):
-            print("Dato nro:" + str(i))
+            logger.debug("Leyendo dato", extra={"numero_dato": i})
             self._senial.poner_valor(self._leer_dato_entrada())
+        logger.info("Lectura de señal desde teclado completada", extra={"valores_leidos": self._senial.cantidad})
         return
 
 
@@ -116,14 +120,13 @@ class AdquisidorArchivo(BaseAdquisidor):
         pass
 
     def leer_senial(self):
-        print('Lectura de la senial')
-        print(self._ubicacion)
+        logger.info("Iniciando lectura de señal desde archivo", extra={"archivo": self._ubicacion})
         try:
             with open(self._ubicacion, 'r') as a:
                 for linea in a:
                     dato = float(linea)
                     self._senial.poner_valor(dato)
-                    print(dato)
+                    logger.debug("Valor leído desde archivo", extra={"valor": dato})
         except IOError as ex:
             super().trazar(AdquisidorArchivo,
                            'leer_senial',
@@ -133,13 +136,13 @@ class AdquisidorArchivo(BaseAdquisidor):
             super().trazar(AdquisidorArchivo,
                            'leer_senial',
                            'Dato de senial no detectado: ' + str(ex))
-            print('Dato de senial no detectado')
+            logger.error("Dato de señal no detectado en archivo", extra={"archivo": self._ubicacion})
             raise ex
         except Exception as ex:
             super().trazar(AdquisidorArchivo,
                            'leer_senial',
                            'Error en la carga de datos: ' + str(ex))
-            print('Error en la carga de datos')
+            logger.error("Error en la carga de datos desde archivo", extra={"archivo": self._ubicacion})
             raise ex
 
 
@@ -158,14 +161,16 @@ class AdquisidorSenoidal(BaseAdquisidor):
         return self._valor
 
     def leer_senial(self):
-        print('Lectura de la senial')
+        logger.info("Iniciando generación de señal senoidal", extra={"tamanio": self._senial.tamanio})
         i = 0
         try:
             while i < self._senial.tamanio:
-                self._senial.poner_valor(self._leer_dato_entrada())
+                valor = self._leer_dato_entrada()
+                self._senial.poner_valor(valor)
                 i += 1
+            logger.info("Señal senoidal generada exitosamente", extra={"valores_generados": i})
         except Exception as ex:
-            super().trazar(AdquisidorArchivo,
+            super().trazar(AdquisidorSenoidal,
                            'leer_senial',
                            'Error en la carga de datos: ' + str(ex))
-            print('Error en la carga de datos')
+            logger.error("Error en la generación de señal senoidal", exc_info=True)

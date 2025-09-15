@@ -1,4 +1,4 @@
-from flask import Flask, render_template, session, redirect, url_for, flash
+from flask import Flask, render_template, session, redirect, url_for, flash, request, g
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from flask_wtf import FlaskForm
@@ -6,7 +6,14 @@ from flask_sqlalchemy import SQLAlchemy
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 import os
+import time
+import uuid
 from config import config
+from config.logging_config import get_logger, LoggerFactory
+
+# Configurar logging
+LoggerFactory.setup(console_output=True)
+logger = get_logger(__name__)
 # SSA-21 Performance Integration (DISABLED due to CSS loading compatibility issues)
 PERFORMANCE_AVAILABLE = False  # Temporarily disabled for CSS compatibility
 
@@ -26,22 +33,68 @@ config[config_name].init_app(app)
 
 # SSA-21: Performance optimizations temporarily disabled for CSS compatibility
 if PERFORMANCE_AVAILABLE:
-    print("✅ SSA-21 Performance optimizations would be available")
-    print("⚠️ Currently disabled to resolve CSS loading issues")
+    logger.info("SSA-21 Performance optimizations available but disabled", extra={"reason": "CSS loading compatibility issues"})
 else:
-    print("⚠️ SSA-21 Performance middleware disabled for CSS compatibility")
+    logger.warning("SSA-21 Performance middleware disabled", extra={"reason": "CSS compatibility"})
 
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 db = SQLAlchemy(app)
 
+# Middleware de logging para requests
+@app.before_request
+def before_request():
+    g.request_id = str(uuid.uuid4())
+    g.start_time = time.time()
+
+    # Log del request entrante
+    logger.info("Request iniciado", extra={
+        "request_id": g.request_id,
+        "method": request.method,
+        "path": request.path,
+        "ip": request.remote_addr,
+        "user_agent": request.user_agent.string,
+        "args": dict(request.args),
+        "form_data": dict(request.form) if request.method == 'POST' else None,
+        "session_id": session.get('_id', 'no_session')
+    })
+
+@app.after_request
+def after_request(response):
+    # Calcular tiempo de procesamiento
+    processing_time = time.time() - g.start_time
+
+    # Log del response
+    logger.info("Request completado", extra={
+        "request_id": g.request_id,
+        "method": request.method,
+        "path": request.path,
+        "status_code": response.status_code,
+        "processing_time_ms": round(processing_time * 1000, 2),
+        "response_size": len(response.get_data()) if response.get_data() else 0
+    })
+
+    return response
+
 @app.errorhandler(404)
 def page_not_found(e):
+    logger.warning("Página no encontrada", extra={
+        "path": request.path,
+        "method": request.method,
+        "ip": request.remote_addr,
+        "user_agent": request.user_agent.string
+    })
     return render_template('404.html'), 404
 
 
 @app.errorhandler(500)
 def internal_server_error(e):
+    logger.error("Error interno del servidor", extra={
+        "path": request.path,
+        "method": request.method,
+        "ip": request.remote_addr,
+        "user_agent": request.user_agent.string
+    }, exc_info=True)
     return render_template('500.html'), 500
 
 
@@ -113,12 +166,17 @@ def adquisicion():
     from forms import SenialForm
     form = SenialForm()
     seniales_demo = []
-    
+
     if form.validate_on_submit():
+        logger.info("Señal demo adquirida", extra={
+            "request_id": getattr(g, 'request_id', 'unknown'),
+            "identificador": form.identificador.data,
+            "session_id": session.get('_id', 'no_session')
+        })
         flash('Señal demo adquirida exitosamente')
         seniales_demo.append(f"ID: {form.identificador.data}")
         return redirect(url_for('adquisicion'))
-    
+
     return render_template('aplicacion/adquisicion.html', form=form, seniales=seniales_demo)
 
 
@@ -135,4 +193,9 @@ def visualizacion():
 if __name__ == '__main__':
     # SECURITY: Debug mode now controlled by environment variable
     debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
+    logger.info("Iniciando aplicación Flask", extra={
+        "debug_mode": debug_mode,
+        "port": 5001,
+        "config_env": config_name
+    })
     app.run(debug=debug_mode, port=5001)

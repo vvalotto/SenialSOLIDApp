@@ -9,6 +9,9 @@ import datetime
 from acceso_datos.mapeador import *
 from utilidades.trazador import *
 from utilidades.auditor import *
+from config.logging_config import get_logger
+
+logger = get_logger(__name__)
 
 
 class BaseContexto(BaseTrazador, BaseAuditor, metaclass=ABCMeta):
@@ -48,7 +51,8 @@ class BaseContexto(BaseTrazador, BaseAuditor, metaclass=ABCMeta):
     @abstractmethod
     def listar(self):
         lista = [f[len(self._recurso) + 1:] for f in glob.glob(self._recurso + '/*.dat')]
-        print(lista)
+        logger.info("Lista de archivos obtenida", extra={"cantidad": len(lista), "archivos": lista[:5]})  # Solo primeros 5 para evitar logs muy largos
+        return lista
 
     def auditar(self, contexto, auditoria):
         nombre = 'auditor_contexto.log'
@@ -123,9 +127,9 @@ class ContextoPickle(BaseContexto):
             with open(ubicacion, "rb") as a:
                 e = pickle.load(a)
         except IOError as eIO:
-            print(eIO)
+            logger.error("Error de I/O recuperando entidad", extra={"id_entidad": id_entidad, "archivo": ubicacion}, exc_info=True)
         except ValueError as eVE:
-            print(eVE)
+            logger.error("Error de valor recuperando entidad", extra={"id_entidad": id_entidad, "archivo": ubicacion}, exc_info=True)
         return e
 
     def listar(self):
