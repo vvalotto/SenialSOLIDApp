@@ -5,6 +5,43 @@ All notable changes to SenialSOLIDApp will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.9.1] - 2025-09-16 - PyCharm Integration & Configuration Fixes
+
+### 🔧 Development Environment Enhancement
+- **PyCharm Compatibility**: Enhanced IDE integration with automatic path configuration
+- **Configuration Fixes**: Resolved regex issues in coverage configuration
+- **Developer Experience**: Simplified project setup for PyCharm development
+
+### Added
+- **lanzador_pycharm.py**: PyCharm-optimized console application launcher
+  - Automatic PYTHONPATH configuration for PyCharm execution
+  - Project root detection and path setup
+  - Console application integration with proper directory switching
+- **views_original_fixed.py**: PyCharm-compatible web application launcher
+  - Fixed Flask web application for PyCharm execution from webapp/ directory
+  - Automatic route configuration and domain module detection
+  - Enhanced error handling with demo mode fallback
+- **Package Structure**: Missing __init__.py files for Python package recognition
+  - `03_aplicacion/__init__.py`
+  - `04_dominio/__init__.py`
+  - `config/__init__.py`
+
+### Fixed
+- **Coverage Configuration**: Corrected regex escaping in pyproject.toml
+  - Fixed `class .*\bProtocol\):` → `class .*\\bProtocol\\):`
+  - Fixed `@(abc\.)?abstractmethod` → `@(abc\\.)?abstractmethod`
+- **PyCharm Path Issues**: Resolved import path problems when running from IDE
+- **Web Application Execution**: Fixed Flask app execution from PyCharm with proper path resolution
+
+### Changed
+- **pyproject.toml**: Enhanced coverage exclude patterns with properly escaped regex
+- **Development Workflow**: Improved PyCharm development experience with dedicated launchers
+
+### Infrastructure
+- **IDE Integration**: PyCharm-specific execution scripts for improved developer productivity
+- **Path Management**: Automatic PYTHONPATH configuration eliminates manual setup
+- **Error Handling**: Graceful fallback modes when domain modules are unavailable
+
 ## [v1.9.0] - 2025-09-15 - SSA-22 Structured Logging Implementation Completed
 
 ### ✅ COMPLETED - Sprint 3 Code Quality Enhancement
