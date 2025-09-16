@@ -2,6 +2,10 @@ from abc import ABCMeta, abstractmethod
 from utilidades.auditor import *
 from utilidades.trazador import *
 import datetime
+from exceptions import RepositoryException, DataAccessException
+from config.logging_config import get_logger
+
+logger = get_logger(__name__)
 
 
 class BaseRepositorio(metaclass=ABCMeta):
@@ -52,11 +56,21 @@ class RepositorioSenial(BaseAuditor, BaseTrazador, BaseRepositorio):
         try:
             self.auditar(senial, "Antes de hacer la persistencia")
             self._contexto.persistir(senial, senial.id)
-            self.auditar(senial,  "Se realizó la persistencia")
+            self.auditar(senial, "Se realizó la persistencia")
+            logger.info("Señal persistida exitosamente", extra={"signal_id": senial.id})
         except Exception as ex:
-            self.auditar(senial,  "Problema al persistir persistencia")
-            self.trazar(senial, "guardar", ex.with_traceback())
-            raise ex
+            self.auditar(senial, "Problema al persistir persistencia")
+            self.trazar(senial, "guardar", str(ex))
+            raise RepositoryException(
+                operation="persistir",
+                entity_type="senial",
+                entity_id=getattr(senial, 'id', 'unknown'),
+                context={
+                    "senial_cantidad": getattr(senial, '_cantidad', 0),
+                    "contexto_tipo": type(self._contexto).__name__
+                },
+                cause=ex
+            )
         return
 
     def obtener(self, senial, id_senial):
@@ -67,16 +81,25 @@ class RepositorioSenial(BaseAuditor, BaseTrazador, BaseRepositorio):
         :return:
         """
         try:
-            self.auditar(senial,  "Antes de recuperar la senial")
+            self.auditar(senial, "Antes de recuperar la senial")
             senial_recuperada = self._contexto.recuperar(senial, id_senial)
-            self.auditar(senial,  "Se realizó la recuperacion")
+            self.auditar(senial, "Se realizó la recuperacion")
+            logger.info("Señal recuperada exitosamente", extra={"signal_id": id_senial})
             return senial_recuperada
-        except Exception:
-            self.auditar(senial,  "Error al recuperar")
-            msj = 'Error al leer una senial persistada: '
-            msj += ' - ID: ' + str(id_senial)
+        except Exception as ex:
+            self.auditar(senial, "Error al recuperar")
+            msj = f'Error al leer una senial persistada - ID: {id_senial}'
             self.trazar(senial, "obtener", msj)
-            raise Exception
+            raise RepositoryException(
+                operation="recuperar",
+                entity_type="senial",
+                entity_id=id_senial,
+                context={
+                    "contexto_tipo": type(self._contexto).__name__,
+                    "operacion_auditada": True
+                },
+                cause=ex
+            )
 
     def auditar(self, senial, auditoria):
         """

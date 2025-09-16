@@ -1,0 +1,70 @@
+{% extends "general/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Página no encontrada - SenialSOLID{% endblock %}
+
+{% block page_content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Página No Encontrada
+                    </h3>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-search fa-5x text-warning mb-3"></i>
+                        <h4>{{ error_message or "Página no encontrada" }}</h4>
+                        <p class="text-muted">
+                            La página que está buscando no existe o ha sido movida.
+                        </p>
+                    </div>
+
+                    {% if recovery_suggestion %}
+                    <div class="alert alert-info" role="alert">
+                        <i class="fas fa-lightbulb"></i>
+                        <strong>Sugerencia:</strong> {{ recovery_suggestion }}
+                    </div>
+                    {% endif %}
+
+                    <div class="row mt-4">
+                        <div class="col-md-6 mb-3">
+                            <a href="{{ url_for('inicio') }}" class="btn btn-primary btn-lg btn-block">
+                                <i class="fas fa-home"></i>
+                                Volver al Inicio
+                            </a>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <button onclick="history.back()" class="btn btn-secondary btn-lg btn-block">
+                                <i class="fas fa-arrow-left"></i>
+                                Página Anterior
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <h5>Enlaces Útiles</h5>
+                        <div class="list-group list-group-horizontal justify-content-center">
+                            <a href="{{ url_for('adquisicion') }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-signal"></i>
+                                Adquisición
+                            </a>
+                            <a href="{{ url_for('procesamiento') }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-cogs"></i>
+                                Procesamiento
+                            </a>
+                            <a href="{{ url_for('acerca') }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-info-circle"></i>
+                                Acerca
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

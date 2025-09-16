@@ -13,6 +13,13 @@ import acceso_datos
 
 from modelo.senial import Senial
 from contenedor.configurador import Configurador
+from exceptions import (
+    ValidationException, AcquisitionException, ProcessingException,
+    RepositoryException, ConsoleException, DataAccessException
+)
+from config.logging_config import get_logger
+
+logger = get_logger(__name__)
 
 
 class Pantalla(metaclass=ABCMeta):
@@ -95,36 +102,110 @@ class PantallaInfoAcercaDe(PantallaInfo):
             with open('./presentacion/acerca.txt', 'r') as archivo_acerca:
                 print(archivo_acerca.read())
         except IOError as eIO:
-            print("Error al leer el archivo: ", eIO)
+            error = ConsoleException(
+                command="mostrar_acerca_de",
+                command_args=["./presentacion/acerca.txt"],
+                context={
+                    "archivo": "./presentacion/acerca.txt",
+                    "operation": "read_info_file"
+                },
+                cause=eIO
+            )
+            print(f"\n❌ {error.user_message}")
+            print(f"💡 {error.recovery_suggestion}")
+            logger.error("Error leyendo archivo acerca.txt", extra=error.context, exc_info=True)
+        except Exception as ex:
+            error = ConsoleException(
+                command="mostrar_acerca_de",
+                user_message="Error inesperado mostrando información",
+                recovery_suggestion="Contacte al administrador del sistema",
+                context={"archivo": "./presentacion/acerca.txt"},
+                cause=ex
+            )
+            print(f"\n❌ {error.user_message}")
+            print(f"💡 {error.recovery_suggestion}")
+            logger.error("Error inesperado en acerca de", extra=error.context, exc_info=True)
 
 
 class PantallaInfoVersiones(PantallaInfo):
 
     def mostrar(self):
         super().mostrar()
-        print("adquisidor: " + adquisicion.__version__)
-        print("procesador: " + procesamiento.__version__)
-        print("persistidor: " + repositorios.__version__)
-        print("configurador: " + contenedor.__version__)
-        print("modelo: " + modelo.__version__)
-        print("utiles: " + utilidades.__version__)
-        print()
-        self.tecla()
+        try:
+            print("adquisidor: " + adquisicion.__version__)
+            print("procesador: " + procesamiento.__version__)
+            print("persistidor: " + repositorios.__version__)
+            print("configurador: " + contenedor.__version__)
+            print("modelo: " + modelo.__version__)
+            print("utiles: " + utilidades.__version__)
+            print()
+            logger.info("Información de versiones mostrada exitosamente")
+        except AttributeError as ae:
+            error = ConsoleException(
+                command="mostrar_versiones",
+                user_message="Error accediendo a información de versiones",
+                recovery_suggestion="Algunos módulos pueden no tener información de versión disponible",
+                context={"missing_attribute": str(ae)},
+                cause=ae
+            )
+            print(f"\n⚠️  {error.user_message}")
+            print(f"💡 {error.recovery_suggestion}")
+            logger.warning("Error de atributo en versiones", extra=error.context)
+        except Exception as ex:
+            error = ConsoleException(
+                command="mostrar_versiones",
+                user_message="Error inesperado mostrando versiones",
+                recovery_suggestion="Contacte al administrador del sistema",
+                cause=ex
+            )
+            print(f"\n❌ {error.user_message}")
+            print(f"💡 {error.recovery_suggestion}")
+            logger.error("Error inesperado en versiones", extra=error.context, exc_info=True)
+        finally:
+            self.tecla()
 
 
 class PantallaInfoComponentes(PantallaInfo):
     def mostrar(self):
         super().mostrar()
-        print("Tipo adquisidor: ", Configurador.adquisidor.__class__)
-        print("Tipo procesador: ", Configurador.procesador.__class__)
-        print("Tipo contexto de datos para adquisidor: ", Configurador.ctx_datos_adquisicion.__class__)
-        print("Tipo contexto de datos para procesador: ", Configurador.ctx_datos_procesamiento.__class__)
-        print("Tipo repositorio de datos para señal adquirida", Configurador.rep_adquisicion.__class__)
-        print("Tipo repositorio de datos para señal procesada", Configurador.rep_procesamiento.__class__)
-        print("Tipo señal Adquirida: ", Configurador.adquisidor._senial.__class__)
-        print("Tipo señal Procesada: ", Configurador.procesador._senial_procesada.__class__)
-        print()
-        self.tecla()
+        try:
+            print("Tipo adquisidor: ", Configurador.adquisidor.__class__)
+            print("Tipo procesador: ", Configurador.procesador.__class__)
+            print("Tipo contexto de datos para adquisidor: ", Configurador.ctx_datos_adquisicion.__class__)
+            print("Tipo contexto de datos para procesador: ", Configurador.ctx_datos_procesamiento.__class__)
+            print("Tipo repositorio de datos para señal adquirida", Configurador.rep_adquisicion.__class__)
+            print("Tipo repositorio de datos para señal procesada", Configurador.rep_procesamiento.__class__)
+            print("Tipo señal Adquirida: ", Configurador.adquisidor._senial.__class__)
+            print("Tipo señal Procesada: ", Configurador.procesador._senial_procesada.__class__)
+            print()
+            logger.info("Información de componentes mostrada exitosamente")
+        except AttributeError as ae:
+            error = ConsoleException(
+                command="mostrar_componentes",
+                user_message="Error accediendo a información de componentes",
+                recovery_suggestion="Verifique que el configurador esté correctamente inicializado",
+                context={
+                    "missing_attribute": str(ae),
+                    "configurador_state": "not_fully_initialized"
+                },
+                cause=ae
+            )
+            print(f"\n⚠️  {error.user_message}")
+            print(f"💡 {error.recovery_suggestion}")
+            logger.warning("Error de configuración en componentes", extra=error.context)
+        except Exception as ex:
+            error = ConsoleException(
+                command="mostrar_componentes",
+                user_message="Error inesperado mostrando componentes",
+                recovery_suggestion="Contacte al administrador del sistema",
+                context={"configurador_available": hasattr(Configurador, 'adquisidor')},
+                cause=ex
+            )
+            print(f"\n❌ {error.user_message}")
+            print(f"💡 {error.recovery_suggestion}")
+            logger.error("Error inesperado en componentes", extra=error.context, exc_info=True)
+        finally:
+            self.tecla()
 
 
 class PantallaAccion(Pantalla):
