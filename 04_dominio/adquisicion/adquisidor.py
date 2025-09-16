@@ -6,6 +6,7 @@ from modelo.senial import *
 from utilidades.trazador import *
 import math
 from config.logging_config import get_logger
+from exceptions import AcquisitionException, ValidationException
 
 logger = get_logger(__name__)
 

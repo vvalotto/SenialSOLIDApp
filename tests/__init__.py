@@ -1,0 +1,1 @@
+# Tests package for SenialSOLID Exception Handling (SSA-23)

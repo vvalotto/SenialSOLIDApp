@@ -11,6 +11,7 @@ from abc import ABCMeta, abstractmethod
 from collections import deque
 import datetime
 from config.logging_config import get_logger
+from exceptions import ValidationException
 
 logger = get_logger(__name__)
 
@@ -114,9 +115,19 @@ class SenialBase(metaclass=ABCMeta):
         try:
             valor = self._valores[indice]
             return valor
-        except Exception as e:
-            logger.error("Error obteniendo valor por índice", extra={"indice": indice, "cantidad": self._cantidad}, exc_info=True)
-            return None
+        except IndexError as e:
+            raise ValidationException(
+                field="indice",
+                value=indice,
+                rule=f"debe estar entre 0 y {len(self._valores)-1}",
+                expected=f"0 <= indice < {len(self._valores)}",
+                context={
+                    "cantidad_valores": self._cantidad,
+                    "tamanio_lista": len(self._valores),
+                    "signal_id": getattr(self, 'id', 'unknown')
+                },
+                cause=e
+            )
 
     def __str__(self):
         """
@@ -144,7 +155,18 @@ class Senial(SenialBase):
             self._valores.append(valor)
             self._cantidad += 1
         else:
-            logger.warning("Capacidad de señal excedida", extra={"cantidad_actual": self._cantidad, "tamanio_maximo": self._tamanio})
+            raise ValidationException(
+                field="capacidad_señal",
+                value=self._cantidad + 1,
+                rule=f"no debe exceder {self._tamanio} valores",
+                expected=f"<= {self._tamanio}",
+                context={
+                    "cantidad_actual": self._cantidad,
+                    "tamanio_maximo": self._tamanio,
+                    "signal_id": getattr(self, 'id', 'unknown'),
+                    "nuevo_valor": str(valor)[:50]  # Limit length for logging
+                }
+            )
         return
 
     def sacar_valor(self, indice):
@@ -154,14 +176,36 @@ class Senial(SenialBase):
         """
         valor = None
         if self._cantidad > 0:
-            valor = self.obtener_valor(indice)
-            self._valores.remove(valor)
-            self._cantidad -= 1
-
-            return valor
+            try:
+                valor = self.obtener_valor(indice)
+                self._valores.remove(valor)
+                self._cantidad -= 1
+                return valor
+            except ValidationException:
+                # Re-raise ValidationException from obtener_valor
+                raise
+            except ValueError as e:
+                raise ValidationException(
+                    field="valor",
+                    value=valor,
+                    rule="debe existir en la señal",
+                    context={
+                        "cantidad": self._cantidad,
+                        "signal_id": getattr(self, 'id', 'unknown'),
+                        "indice_solicitado": indice
+                    },
+                    cause=e
+                )
         else:
-            logger.warning("Intento de extraer valor de señal vacía", extra={"cantidad": self._cantidad})
-        return valor
+            raise ValidationException(
+                field="señal",
+                value="vacía",
+                rule="debe contener al menos un valor para extraer",
+                context={
+                    "cantidad": self._cantidad,
+                    "signal_id": getattr(self, 'id', 'unknown')
+                }
+            )
 
 
 class SenialPila(Senial):
@@ -176,8 +220,18 @@ class SenialPila(Senial):
             valor = self._valores.pop()
             self._cantidad -= 1
             return valor
-        except Exception as e:
-            logger.warning("No hay elementos en la pila para extraer", extra={"cantidad": self._cantidad})
+        except IndexError as e:
+            raise ValidationException(
+                field="pila",
+                value="vacía",
+                rule="debe contener al menos un elemento para extraer",
+                context={
+                    "cantidad": self._cantidad,
+                    "signal_id": getattr(self, 'id', 'unknown'),
+                    "estructura_tipo": "pila"
+                },
+                cause=e
+            )
         return valor
 
 
@@ -195,8 +249,18 @@ class SenialCola(Senial):
         try:
             valor = self._valores.popleft()
             self._cantidad -= 1
-        except Exception as e:
-            logger.warning("No hay elementos en la cola para extraer", extra={"cantidad": self._cantidad})
+        except IndexError as e:
+            raise ValidationException(
+                field="cola",
+                value="vacía",
+                rule="debe contener al menos un elemento para extraer",
+                context={
+                    "cantidad": self._cantidad,
+                    "signal_id": getattr(self, 'id', 'unknown'),
+                    "estructura_tipo": "cola"
+                },
+                cause=e
+            )
         return valor
 
 
