@@ -312,7 +312,7 @@ threshold = get_config_value('processing.threshold', default=5)
 
 #### Uso con Configurador Modernizado
 ```python
-from 03_aplicacion.contenedor.configurador_modern import ConfiguradorCompatible
+from aplicacion.contenedor.configurador_modern import ConfiguradorCompatible
 
 # Drop-in replacement del configurador original
 configurador = ConfiguradorCompatible()

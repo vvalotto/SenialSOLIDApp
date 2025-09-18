@@ -17,6 +17,17 @@ PyYAML==6.0.1
 cerberus==1.3.5
 jsonschema==4.20.0
 
+# SSA-24 Security dependencies
+bleach>=6.0.0
+validators>=0.20.0
+python-magic>=0.4.27
+defusedxml>=0.7.1
+
+# SSA-24 Testing dependencies
+psutil>=5.9.0
+faker>=19.0.0
+hypothesis>=6.0.0
+
 # Base de datos
 SQLAlchemy==2.0.23
 

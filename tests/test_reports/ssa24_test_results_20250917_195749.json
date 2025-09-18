@@ -1,0 +1,112 @@
+{
+  "framework": "SSA-24 Input Validation Framework",
+  "report_version": "1.0",
+  "generated_at": "2025-09-17T19:57:49.526142",
+  "system_info": {
+    "platform": "Darwin 24.6.0 x86_64",
+    "python_version": "3.12.0",
+    "cpu_count": 8,
+    "memory_total": "8.0 GB",
+    "disk_space": "233.5 GB",
+    "timestamp": "2025-09-17T19:57:40.184977",
+    "hostname": "MacBook-Pro-de-Victor.local"
+  },
+  "summary": {
+    "total_tests": 0,
+    "total_passed": 0,
+    "total_failed": 0,
+    "total_errors": 4,
+    "total_execution_time": 9.338101863861084,
+    "success_rate": 0
+  },
+  "test_suites": [
+    {
+      "name": "Core Framework Tests",
+      "description": "Unit tests for core validation framework components",
+      "test_count": 0,
+      "passed": 0,
+      "failed": 0,
+      "errors": 1,
+      "skipped": 0,
+      "execution_time": 9.067752838134766,
+      "results": [
+        {
+          "test_name": "suite_execution",
+          "test_class": "TestSuite",
+          "test_module": "test_ssa24_validation_framework",
+          "status": "ERROR",
+          "execution_time": 0,
+          "error_message": "'DetailedTestResult' object has no attribute 'stream'",
+          "traceback": null,
+          "performance_data": null
+        }
+      ]
+    },
+    {
+      "name": "Integration Tests",
+      "description": "Cross-layer integration and workflow validation tests",
+      "test_count": 0,
+      "passed": 0,
+      "failed": 0,
+      "errors": 1,
+      "skipped": 0,
+      "execution_time": 0.199080228805542,
+      "results": [
+        {
+          "test_name": "suite_execution",
+          "test_class": "TestSuite",
+          "test_module": "test_ssa24_integration",
+          "status": "ERROR",
+          "execution_time": 0,
+          "error_message": "'DetailedTestResult' object has no attribute 'stream'",
+          "traceback": null,
+          "performance_data": null
+        }
+      ]
+    },
+    {
+      "name": "Security Tests",
+      "description": "Security vulnerability detection and prevention tests",
+      "test_count": 0,
+      "passed": 0,
+      "failed": 0,
+      "errors": 1,
+      "skipped": 0,
+      "execution_time": 0.036093950271606445,
+      "results": [
+        {
+          "test_name": "suite_execution",
+          "test_class": "TestSuite",
+          "test_module": "test_ssa24_security",
+          "status": "ERROR",
+          "execution_time": 0,
+          "error_message": "'DetailedTestResult' object has no attribute 'stream'",
+          "traceback": null,
+          "performance_data": null
+        }
+      ]
+    },
+    {
+      "name": "Performance Tests",
+      "description": "Performance, scalability, and resource usage tests",
+      "test_count": 0,
+      "passed": 0,
+      "failed": 0,
+      "errors": 1,
+      "skipped": 0,
+      "execution_time": 0.03517484664916992,
+      "results": [
+        {
+          "test_name": "suite_execution",
+          "test_class": "TestSuite",
+          "test_module": "test_ssa24_performance",
+          "status": "ERROR",
+          "execution_time": 0,
+          "error_message": "No module named 'memory_profiler'",
+          "traceback": null,
+          "performance_data": null
+        }
+      ]
+    }
+  ]
+}
