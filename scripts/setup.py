@@ -192,7 +192,7 @@ class SetupManager:
                 "import flask",
                 "import click", 
                 "import yaml",
-                "from 04_dominio.modelo.senial import Senial"
+                "from dominio.modelo.senial import Senial"
             ]
             
             for import_stmt in test_imports:

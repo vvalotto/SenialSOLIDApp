@@ -1,0 +1,112 @@
+{
+  "framework": "SSA-24 Input Validation Framework",
+  "report_version": "1.0",
+  "generated_at": "2025-09-17T19:48:16.118847",
+  "system_info": {
+    "platform": "Darwin 24.6.0 x86_64",
+    "python_version": "3.12.0",
+    "cpu_count": 8,
+    "memory_total": "8.0 GB",
+    "disk_space": "233.5 GB",
+    "timestamp": "2025-09-17T19:48:16.108283",
+    "hostname": "MacBook-Pro-de-Victor.local"
+  },
+  "summary": {
+    "total_tests": 0,
+    "total_passed": 0,
+    "total_failed": 0,
+    "total_errors": 4,
+    "total_execution_time": 0.009225130081176758,
+    "success_rate": 0
+  },
+  "test_suites": [
+    {
+      "name": "Core Framework Tests",
+      "description": "Unit tests for core validation framework components",
+      "test_count": 0,
+      "passed": 0,
+      "failed": 0,
+      "errors": 1,
+      "skipped": 0,
+      "execution_time": 0.004378795623779297,
+      "results": [
+        {
+          "test_name": "suite_execution",
+          "test_class": "TestSuite",
+          "test_module": "test_ssa24_validation_framework",
+          "status": "ERROR",
+          "execution_time": 0,
+          "error_message": "invalid decimal literal (test_ssa24_validation_framework.py, line 21)",
+          "traceback": null,
+          "performance_data": null
+        }
+      ]
+    },
+    {
+      "name": "Integration Tests",
+      "description": "Cross-layer integration and workflow validation tests",
+      "test_count": 0,
+      "passed": 0,
+      "failed": 0,
+      "errors": 1,
+      "skipped": 0,
+      "execution_time": 0.0018661022186279297,
+      "results": [
+        {
+          "test_name": "suite_execution",
+          "test_class": "TestSuite",
+          "test_module": "test_ssa24_integration",
+          "status": "ERROR",
+          "execution_time": 0,
+          "error_message": "invalid decimal literal (test_ssa24_integration.py, line 18)",
+          "traceback": null,
+          "performance_data": null
+        }
+      ]
+    },
+    {
+      "name": "Security Tests",
+      "description": "Security vulnerability detection and prevention tests",
+      "test_count": 0,
+      "passed": 0,
+      "failed": 0,
+      "errors": 1,
+      "skipped": 0,
+      "execution_time": 0.0015940666198730469,
+      "results": [
+        {
+          "test_name": "suite_execution",
+          "test_class": "TestSuite",
+          "test_module": "test_ssa24_security",
+          "status": "ERROR",
+          "execution_time": 0,
+          "error_message": "invalid decimal literal (test_ssa24_security.py, line 19)",
+          "traceback": null,
+          "performance_data": null
+        }
+      ]
+    },
+    {
+      "name": "Performance Tests",
+      "description": "Performance, scalability, and resource usage tests",
+      "test_count": 0,
+      "passed": 0,
+      "failed": 0,
+      "errors": 1,
+      "skipped": 0,
+      "execution_time": 0.0013861656188964844,
+      "results": [
+        {
+          "test_name": "suite_execution",
+          "test_class": "TestSuite",
+          "test_module": "test_ssa24_performance",
+          "status": "ERROR",
+          "execution_time": 0,
+          "error_message": "invalid decimal literal (test_ssa24_performance.py, line 22)",
+          "traceback": null,
+          "performance_data": null
+        }
+      ]
+    }
+  ]
+}

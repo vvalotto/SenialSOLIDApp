@@ -151,9 +151,9 @@ def main():
     print("\n✅ Todas las pruebas del configurador completadas")
     print("\n💡 El sistema nuevo es compatible con código existente:")
     print("   # Reemplazar:")
-    print("   from 03_aplicacion.contenedor.configurador import Configurador")
+    print("   from aplicacion.contenedor.configurador import Configurador")
     print("   # Con:")
-    print("   from 03_aplicacion.contenedor.configurador_modern import Configurador")
+    print("   from aplicacion.contenedor.configurador_modern import Configurador")
 
 if __name__ == "__main__":
     main()
