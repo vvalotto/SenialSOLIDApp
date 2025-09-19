@@ -1,0 +1,158 @@
+# SSA-26 Academic Resilience Configuration
+# Simplified error handling and resilience patterns for educational purposes
+
+academic_error_handling:
+  # Educational mode settings
+  educational_mode: true
+  include_technical_details: true
+  language: "es"
+
+  # Simple retry configuration (no exponential backoff)
+  retry:
+    max_attempts: 3
+    delay_seconds: 1
+    enabled_for:
+      - file_operations
+      - database_simple
+      - signal_processing
+
+    # Operation-specific retry settings
+    file_operations:
+      max_attempts: 3
+      delay_seconds: 1.0
+      timeout_seconds: 10
+
+    database_operations:
+      max_attempts: 5
+      delay_seconds: 2.0
+      timeout_seconds: 5
+
+    signal_processing:
+      max_attempts: 2
+      delay_seconds: 0.5
+      timeout_seconds: 30
+
+  # User-friendly messaging configuration
+  messaging:
+    severity_levels:
+      info: "Información"
+      warning: "Advertencia"
+      error: "Error"
+      critical: "Crítico"
+
+    # Educational tips for different error categories
+    educational_tips:
+      validation: "Las validaciones protegen la integridad de los datos en procesamiento de señales"
+      signal_acquisition: "Los errores de adquisición pueden deberse a problemas de hardware o configuración"
+      signal_processing: "Los errores de procesamiento pueden indicar parámetros fuera de rango válido"
+      data_access: "Los errores de acceso a datos suelen ser transitorios y se pueden reintentar"
+      security: "Los errores de seguridad protegen el sistema de accesos no autorizados"
+      system: "Los errores de sistema requieren intervención técnica"
+
+  # Simple timeout configuration
+  timeouts:
+    file_operation: 10      # seconds
+    database_query: 5       # seconds
+    signal_processing: 30   # seconds
+    web_request: 15         # seconds
+    user_interaction: 60    # seconds
+
+  # Basic graceful degradation
+  graceful_degradation:
+    enabled: true
+
+    # Fallback configurations for signal processing
+    signal_fallbacks:
+      default_sample_rate: 44100   # Hz
+      default_frequency: 1000      # Hz
+      safe_amplitude: 1.0          # V
+      simplified_filter_order: 2   # Instead of higher orders
+      basic_window: "hamming"      # Instead of complex windows
+
+    # Data acquisition fallbacks
+    acquisition_fallbacks:
+      default_duration: 1.0        # seconds
+      fallback_channels: 1         # mono instead of stereo
+      safe_range: [-10.0, 10.0]    # voltage range
+
+    # File operation fallbacks
+    file_fallbacks:
+      default_format: "csv"
+      fallback_encoding: "utf-8"
+      simplified_precision: 6      # decimal places
+
+    # Features that can be disabled in degraded mode
+    degraded_mode_features:
+      - advanced_filtering
+      - real_time_analysis
+      - complex_visualizations
+      - detailed_reporting
+
+  # Error boundary configuration
+  error_boundaries:
+    domain_boundary:
+      enabled: true
+      log_violations: true
+      educational_logging: true
+
+    application_boundary:
+      enabled: true
+      enable_fallback: true
+      preserve_user_session: true
+
+    web_boundary:
+      enabled: true
+      show_technical_details: true  # For educational purposes
+      custom_error_pages: true
+
+  # Academic signal processing constraints
+  signal_constraints:
+    frequency_range: [0.1, 50000]     # 0.1Hz to 50kHz
+    amplitude_range: [-10.0, 10.0]    # ±10V safety range
+    sample_rate_range: [1, 1000000]   # 1Hz to 1MHz
+    description_length: [3, 200]      # Characters
+
+  # Logging configuration for educational purposes
+  logging:
+    log_level: "INFO"
+    log_retry_attempts: true
+    log_fallback_usage: true
+    log_performance_impact: true
+    include_educational_context: true
+
+    # Log destinations
+    console_logging: true
+    file_logging: true
+    log_file_path: "logs/academic_error_handling.log"
+
+# Integration with existing SSA systems
+integration:
+  ssa23_exceptions:
+    enabled: true
+    preserve_hierarchy: true
+    enhance_with_educational_content: true
+
+  ssa24_validation:
+    enabled: true
+    bridge_validation_errors: true
+    educational_validation_messages: true
+
+# Performance monitoring (simplified for academic use)
+performance:
+  monitor_retry_patterns: true
+  track_fallback_usage: true
+  measure_degradation_impact: true
+  generate_educational_reports: true
+
+  # Thresholds for educational alerts
+  thresholds:
+    max_retry_rate: 20          # % of operations requiring retry
+    max_fallback_rate: 10       # % of operations using fallback
+    max_performance_impact: 25   # % performance degradation allowed
+
+# Development and testing
+development:
+  chaos_testing: false           # Disabled for academic stability
+  error_injection: false         # Can be enabled for learning exercises
+  mock_failures: false           # For testing fallback scenarios
+  educational_examples: true     # Include example scenarios
