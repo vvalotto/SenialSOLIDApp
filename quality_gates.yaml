@@ -1,0 +1,316 @@
+# SSA-25 Quality Gates Configuration
+# Definición de umbrales y reglas para métricas de calidad de código
+
+project:
+  name: "SenialSOLIDApp"
+  version: "2.0.0"
+  baseline_date: "2025-09-20"
+  current_sprint: 3
+
+# =============================================================================
+# QUALITY GATES DEFINITION
+# =============================================================================
+
+quality_gates:
+  # Gate 1: Code Quality Score
+  pylint_score:
+    metric: "pylint"
+    threshold: 8.0
+    baseline: 7.23
+    current_target: 7.5  # Sprint 3 target
+    operator: ">="
+    severity: "BLOCKER"
+    description: "Pylint code quality score must be above threshold"
+
+  # Gate 2: Code Coverage
+  code_coverage:
+    metric: "coverage"
+    threshold: 70.0
+    baseline: 0.0  # Not measured yet
+    current_target: 70.0  # Sprint 3 target
+    operator: ">="
+    severity: "BLOCKER"
+    description: "Code coverage percentage must meet minimum threshold"
+
+  # Gate 3: Cyclomatic Complexity
+  max_complexity:
+    metric: "radon_cc"
+    threshold: 10
+    baseline: 23  # Highest found
+    current_target: 15  # Sprint 3 target (gradual improvement)
+    operator: "<="
+    severity: "CRITICAL"
+    description: "Maximum cyclomatic complexity per function"
+
+  # Gate 4: Maintainability Index
+  maintainability_index:
+    metric: "radon_mi"
+    threshold: 20.0
+    baseline: 55.27
+    current_target: 50.0  # Sprint 3 target (maintain current level)
+    operator: ">="
+    severity: "MAJOR"
+    description: "Minimum maintainability index score"
+
+  # Gate 5: Type Coverage
+  type_coverage:
+    metric: "mypy"
+    threshold: 50.0
+    baseline: 15.0  # Estimated from errors
+    current_target: 25.0  # Sprint 3 target
+    operator: ">="
+    severity: "MINOR"
+    description: "Percentage of code with type annotations"
+
+# =============================================================================
+# PROGRESSIVE THRESHOLDS BY SPRINT
+# =============================================================================
+
+sprint_targets:
+  sprint_3:  # Current Sprint - Baseline establishment
+    pylint_score: 7.5
+    code_coverage: 70.0
+    max_complexity: 15
+    maintainability_index: 50.0
+    type_coverage: 25.0
+
+  sprint_4:  # Quality gates active
+    pylint_score: 8.0
+    code_coverage: 75.0
+    max_complexity: 12
+    maintainability_index: 55.0
+    type_coverage: 40.0
+
+  sprint_5:  # Quality improvement
+    pylint_score: 8.5
+    code_coverage: 80.0
+    max_complexity: 10
+    maintainability_index: 60.0
+    type_coverage: 60.0
+
+  sprint_6:  # Quality excellence
+    pylint_score: 9.0
+    code_coverage: 85.0
+    max_complexity: 8
+    maintainability_index: 65.0
+    type_coverage: 80.0
+
+# =============================================================================
+# CRITICAL FILES AND MODULES
+# =============================================================================
+
+critical_modules:
+  # Domain layer - highest quality standards
+  domain:
+    paths:
+      - "dominio/modelo/"
+      - "dominio/repositorios/"
+      - "dominio/exceptions/"
+    pylint_threshold: 8.5
+    coverage_threshold: 90.0
+    complexity_threshold: 8
+
+  # Application layer - high quality standards
+  application:
+    paths:
+      - "aplicacion/validation/"
+      - "aplicacion/patterns/"
+    pylint_threshold: 8.0
+    coverage_threshold: 85.0
+    complexity_threshold: 10
+
+  # Infrastructure layer - moderate standards
+  infrastructure:
+    paths:
+      - "infraestructura/"
+    pylint_threshold: 7.5
+    coverage_threshold: 75.0
+    complexity_threshold: 12
+
+  # Presentation layer - basic standards
+  presentation:
+    paths:
+      - "presentacion/"
+    pylint_threshold: 7.0
+    coverage_threshold: 65.0
+    complexity_threshold: 15
+
+# =============================================================================
+# EXCLUSIONS AND EXCEPTIONS
+# =============================================================================
+
+exclusions:
+  files:
+    - "*/migrations/*"
+    - "*/tests/*"
+    - "demo_*.py"
+    - "run_*.py"
+    - "functional_test.py"
+    - "*/static/*"
+    - "*/templates/*"
+
+  legacy_modules:
+    # Temporary exclusions for legacy code during refactoring
+    - "aplicacion/managers/controlador_procesamiento.py"  # Import errors
+    - "aplicacion/contenedor/configurador.py"  # Legacy configuration
+
+  complexity_exceptions:
+    # Functions allowed to exceed complexity threshold temporarily
+    - "aplicacion.validation.rules.file_validation:FilePathValidator.validate"
+    - "aplicacion.validation.rules.user_input_validation:NumericInputValidator.validate"
+    - "aplicacion.validation.framework.sanitization_engine:SanitizationEngine.sanitize"
+
+# =============================================================================
+# ENFORCEMENT LEVELS
+# =============================================================================
+
+enforcement:
+  # BLOCKER: Prevents merge/deployment
+  BLOCKER:
+    - pylint_score
+    - code_coverage
+
+  # CRITICAL: Must be fixed within sprint
+  CRITICAL:
+    - max_complexity
+
+  # MAJOR: Must be addressed in next sprint
+  MAJOR:
+    - maintainability_index
+
+  # MINOR: Should be improved gradually
+  MINOR:
+    - type_coverage
+
+# =============================================================================
+# REPORTING AND NOTIFICATIONS
+# =============================================================================
+
+reporting:
+  dashboard:
+    enabled: true
+    update_frequency: "daily"
+    metrics:
+      - pylint_score
+      - code_coverage
+      - max_complexity
+      - maintainability_index
+      - type_coverage
+
+  notifications:
+    slack_webhook: null  # To be configured
+    email_reports: false
+
+  exports:
+    formats: ["json", "html", "csv"]
+    schedule: "weekly"
+    retention_days: 90
+
+# =============================================================================
+# AUTOMATION SETTINGS
+# =============================================================================
+
+automation:
+  pre_commit:
+    enabled: true
+    hooks:
+      - pylint
+      - flake8
+      - mypy
+      - black
+      - isort
+
+  ci_cd:
+    enabled: false  # To be enabled in Sprint 4
+    pipeline_steps:
+      - quality_check
+      - coverage_report
+      - complexity_analysis
+
+  auto_fix:
+    enabled: true
+    tools:
+      - black  # Auto-formatting
+      - isort  # Import sorting
+      - autoflake  # Remove unused imports
+
+# =============================================================================
+# HISTORICAL TRACKING
+# =============================================================================
+
+baseline_history:
+  "2025-09-20":  # Initial baseline
+    pylint_score: 7.23
+    code_coverage: 0.0
+    max_complexity: 23
+    maintainability_index: 55.27
+    type_coverage: 15.0
+    notes: "Initial baseline establishment - SSA-25 Phase 3"
+
+# =============================================================================
+# INTEGRATION SETTINGS
+# =============================================================================
+
+integrations:
+  sonarqube:
+    enabled: false
+    url: null
+
+  jira:
+    enabled: false
+    project_key: "SSA"
+
+  github:
+    enabled: false
+    status_checks: true
+
+  gitlab:
+    enabled: false
+    merge_request_blocking: true
+
+# =============================================================================
+# CUSTOM RULES AND METRICS
+# =============================================================================
+
+custom_metrics:
+  ddd_compliance:
+    description: "Domain-Driven Design patterns compliance"
+    threshold: 80.0
+    severity: "MAJOR"
+
+  security_score:
+    description: "Security vulnerability score from bandit"
+    threshold: 0
+    severity: "BLOCKER"
+
+  documentation_coverage:
+    description: "Percentage of code with documentation"
+    threshold: 60.0
+    severity: "MINOR"
+
+# =============================================================================
+# CONFIGURATION VALIDATION
+# =============================================================================
+
+validation:
+  required_tools:
+    - pylint
+    - flake8
+    - mypy
+    - radon
+    - coverage
+    - black
+    - isort
+
+  config_files:
+    - .pylintrc
+    - setup.cfg
+    - mypy.ini
+    - .coveragerc
+    - .radon.cfg
+
+  minimum_python_version: "3.11"
+
+schema_version: "1.0"
+last_updated: "2025-09-20"
+updated_by: "Victor Valotto"

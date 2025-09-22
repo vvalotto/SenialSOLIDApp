@@ -57,6 +57,28 @@ dev = [
     "bandit>=1.7.5",
     "safety>=2.3.0",
     "pre-commit>=3.3.0",
+    "radon>=6.0.0",
+    "pylint>=2.17.0",
+]
+quality = [
+    # SSA-25 Quality Tools
+    "pylint>=2.17.0",
+    "flake8>=6.0.0",
+    "mypy>=1.5.0",
+    "radon>=6.0.0",
+    "coverage>=7.3.0",
+    "black>=23.7.0",
+    "isort>=5.12.0",
+    "bandit>=1.7.5",
+    "safety>=2.3.0",
+    "pre-commit>=3.3.0",
+    # Flake8 Extensions
+    "flake8-docstrings>=1.7.0",
+    "flake8-import-order>=0.18.2",
+    "flake8-bugbear>=23.0.0",
+    # Type checking extensions
+    "types-PyYAML>=6.0.0",
+    "types-requests>=2.31.0",
 ]
 test = [
     "pytest>=7.4.0",
@@ -79,15 +101,18 @@ docs = [
 "Changelog" = "https://github.com/vvalotto/SenialSOLIDApp/blob/master/CHANGELOG.md"
 
 [project.scripts]
-senial-console = "01_presentacion.consola.lanzador:main"
-senial-webapp = "01_presentacion.webapp.views:main"
+senial-console = "presentacion.consola.lanzador:main"
+senial-webapp = "presentacion.webapp.views:main"
+# SSA-25 Quality Scripts
+quality-check = "scripts.quality_check:main"
+quality-report = "scripts.generate_reports:main"
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
-include = ["01_presentacion*", "03_aplicacion*", "04_dominio*", "05_Infraestructura*"]
+include = ["aplicacion*", "dominio*", "infraestructura*", "presentacion*", "config*", "scripts*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -98,13 +123,23 @@ addopts = [
     "--cov=.",
     "--cov-report=html",
     "--cov-report=term-missing",
-    "--cov-fail-under=80",
+    "--cov-report=json",
+    "--cov-fail-under=70",  # SSA-25 baseline
     "--verbose",
+    "--tb=short",
+    "--strict-markers",
 ]
 markers = [
     "unit: Unit tests",
-    "integration: Integration tests", 
+    "integration: Integration tests",
     "slow: Slow running tests",
+    "quality: Quality gate tests",
+    "security: Security-related tests",
+]
+# Quality-specific test configuration
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
 ]
 
 [tool.coverage.run]
@@ -174,5 +209,93 @@ warn_unreachable = true
 strict_equality = true
 
 [tool.bandit]
-exclude_dirs = ["tests", "venv"]
+exclude_dirs = ["tests", "venv", "docs", "scripts"]
 skips = ["B101", "B601"]
+# SSA-25 Security Configuration
+confidence_level = "medium"
+severity_level = "medium"
+
+# =============================================================================
+# SSA-25 QUALITY TOOLS CONFIGURATION
+# =============================================================================
+
+[tool.pylint.main]
+# SSA-25 Pylint Configuration
+score = true
+jobs = 0
+confidence = ["HIGH", "CONTROL_FLOW", "INFERENCE", "INFERENCE_FAILURE", "UNDEFINED"]
+
+[tool.pylint.messages_control]
+# SSA-25 Custom disable rules for DDD patterns
+disable = [
+    "missing-module-docstring",
+    "missing-class-docstring",
+    "missing-function-docstring",
+    "too-few-public-methods",
+    "too-many-arguments",
+    "line-too-long",  # Handled by black
+    "invalid-name",   # DDD naming patterns
+]
+
+[tool.pylint.reports]
+output-format = "text"
+reports = false
+
+[tool.pylint.format]
+max-line-length = 100
+
+[tool.flake8]
+# SSA-25 Flake8 configuration (referenced from setup.cfg)
+max-line-length = 100
+max-complexity = 10
+ignore = ["E203", "W503", "E501"]
+per-file-ignores = [
+    "__init__.py:F401,E402",
+    "tests/*:F401,F811,F841,E501",
+]
+
+[tool.radon]
+# SSA-25 Radon configuration
+exclude = "tests/*,migrations/*,static/*,templates/*"
+ignore = "venv,__pycache__,.git"
+
+[tool.ssa25_quality]
+# SSA-25 Specific Quality Configuration
+baseline_date = "2025-09-20"
+current_sprint = 3
+
+[tool.ssa25_quality.metrics]
+pylint_threshold = 8.0
+coverage_threshold = 70.0
+complexity_threshold = 10
+maintainability_threshold = 20.0
+type_coverage_threshold = 50.0
+
+[tool.ssa25_quality.modules]
+# Quality standards by module
+domain = { pylint = 8.5, coverage = 90.0, complexity = 8 }
+application = { pylint = 8.0, coverage = 85.0, complexity = 10 }
+infrastructure = { pylint = 7.5, coverage = 75.0, complexity = 12 }
+presentation = { pylint = 7.0, coverage = 65.0, complexity = 15 }
+
+[tool.ssa25_quality.tools]
+# Tools execution configuration
+pylint = { enabled = true, config = ".pylintrc" }
+flake8 = { enabled = true, config = "setup.cfg" }
+mypy = { enabled = true, config = "mypy.ini" }
+radon = { enabled = true, config = ".radon.cfg" }
+coverage = { enabled = true, config = ".coveragerc" }
+bandit = { enabled = true, config = "pyproject.toml" }
+
+[tool.ssa25_quality.reporting]
+# Reporting configuration
+dashboard_enabled = true
+json_reports = true
+html_reports = true
+email_notifications = false
+
+[tool.ssa25_quality.integration]
+# CI/CD Integration settings
+github_actions = false  # Enable in Sprint 4
+pre_commit_hooks = true
+quality_gates_blocking = true

@@ -1,0 +1,179 @@
+# SSA-25 Pre-commit Configuration
+# Configuración de hooks para quality checks automáticos
+
+repos:
+  # Black - Formateo automático de código
+  - repo: https://github.com/psf/black
+    rev: 24.8.0
+    hooks:
+      - id: black
+        language_version: python3.11
+        args: ["--line-length=100"]
+        exclude: ^(migrations/|static/|templates/)
+
+  # isort - Ordenamiento de imports
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        args: ["--profile", "black", "--line-length=100"]
+        exclude: ^(migrations/|static/|templates/)
+
+  # Flake8 - Style guide enforcement
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.1.1
+    hooks:
+      - id: flake8
+        additional_dependencies:
+          - flake8-docstrings
+          - flake8-import-order
+          - flake8-bugbear
+        exclude: ^(migrations/|static/|templates/|tests/)
+        args: ["--max-line-length=100", "--extend-ignore=E203,W503"]
+
+  # MyPy - Type checking (gradual)
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.5.1
+    hooks:
+      - id: mypy
+        additional_dependencies: [types-all]
+        exclude: ^(migrations/|static/|templates/|tests/|demo_.*\.py|run_.*\.py)
+        args: ["--ignore-missing-imports", "--follow-imports=silent"]
+
+  # Pylint - Code analysis (selective)
+  - repo: https://github.com/pycqa/pylint
+    rev: v3.0.2
+    hooks:
+      - id: pylint
+        exclude: ^(migrations/|static/|templates/|tests/|demo_.*\.py|run_.*\.py)
+        args: ["--score=n", "--reports=n"]
+        # Solo errores críticos en pre-commit
+        additional_dependencies: []
+
+  # Bandit - Security linter
+  - repo: https://github.com/pycqa/bandit
+    rev: 1.7.5
+    hooks:
+      - id: bandit
+        exclude: ^(tests/|demo_.*\.py)
+        args: ["-c", "pyproject.toml"]
+
+  # Safety - Dependency vulnerability check
+  - repo: https://github.com/Lucas-C/pre-commit-hooks-safety
+    rev: v1.3.2
+    hooks:
+      - id: python-safety-dependencies-check
+        files: requirements.*\.txt$
+
+  # Generic hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      # Formateo básico
+      - id: trailing-whitespace
+        exclude: ^(.*\.md|static/|templates/)
+      - id: end-of-file-fixer
+        exclude: ^(static/|templates/)
+      - id: check-yaml
+        args: ["--allow-multiple-documents"]
+      - id: check-json
+        exclude: ^(static/|templates/)
+      - id: check-toml
+      - id: check-xml
+        exclude: ^(static/|templates/)
+
+      # Validaciones de Python
+      - id: check-ast
+      - id: check-builtin-literals
+      - id: check-docstring-first
+      - id: debug-statements
+      - id: name-tests-test
+        args: ["--pytest-test-first"]
+
+      # Git hooks
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: ["--maxkb=1000"]
+
+      # Seguridad básica
+      - id: detect-private-key
+      - id: check-executables-have-shebangs
+
+  # Conventional Commits (opcional)
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v3.0.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args: ["--optional-scope"]
+
+  # Local hooks personalizados
+  - repo: local
+    hooks:
+      # Quality gates check (solo en archivos modificados)
+      - id: quality-gates-check
+        name: SSA-25 Quality Gates Check
+        entry: python scripts/quality_check.py
+        language: system
+        files: \.py$
+        exclude: ^(tests/|migrations/|static/|templates/|demo_.*\.py|run_.*\.py)
+        args: ["--modules"]
+        stages: [pre-push]  # Solo en push, no en cada commit
+
+      # Complexity check para funciones modificadas
+      - id: complexity-check
+        name: Cyclomatic Complexity Check
+        entry: radon cc
+        language: system
+        files: \.py$
+        exclude: ^(tests/|migrations/|static/|templates/)
+        args: ["--min", "C"]  # Solo reportar C, D, E, F
+        stages: [pre-commit]
+
+      # Import order enforcement
+      - id: import-order
+        name: Import Order Check
+        entry: isort
+        language: system
+        files: \.py$
+        exclude: ^(migrations/|static/|templates/)
+        args: ["--check-only", "--diff"]
+
+# Configuración global
+default_language_version:
+  python: python3.11
+
+default_stages: [pre-commit]
+
+# Excluir directorios específicos de todos los hooks
+exclude: |
+  (?x)^(
+      migrations/.*|
+      static/.*|
+      templates/.*|
+      node_modules/.*|
+      \.git/.*|
+      \.venv/.*|
+      venv/.*|
+      \.tox/.*|
+      __pycache__/.*|
+      \.pytest_cache/.*|
+      \.mypy_cache/.*|
+      build/.*|
+      dist/.*|
+      .*\.egg-info/.*
+  )$
+
+# Configuración específica por entorno
+ci:
+  # Configuración para CI/CD
+  autofix_commit_msg: |
+    [pre-commit.ci] auto fixes from pre-commit hooks
+
+    for more information, see https://pre-commit.ci
+  autofix_prs: true
+  autoupdate_branch: ''
+  autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
+  autoupdate_schedule: weekly
+  skip: [pylint, quality-gates-check]  # Skip expensive hooks in CI
+  submodules: false
