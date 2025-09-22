@@ -1,0 +1,232 @@
+# Coverage.py configuration for SenialSOLIDApp
+# This file provides detailed configuration for code coverage measurement
+# Compatible with pytest-cov and standalone coverage runs
+
+[run]
+# Source code to analyze
+source = .
+
+# Branches to include in coverage measurement
+branch = True
+
+# Enable parallel processing for better performance
+parallel = True
+
+# Data file location
+data_file = .coverage
+
+# Paths to omit from coverage
+omit =
+    # Test files and directories
+    */tests/*
+    */test_*
+    test_*.py
+    *test*.py
+    functional_test.py
+
+    # Virtual environments
+    */venv/*
+    */.venv/*
+    */env/*
+    */.env/*
+    */site-packages/*
+
+    # Build and distribution
+    */build/*
+    */dist/*
+    *.egg-info/*
+    */migrations/*
+
+    # Development and tooling
+    */__pycache__/*
+    .tox/*
+    .git/*
+    .idea/*
+    .claude/*
+    node_modules/*
+
+    # Static files and templates
+    */static/*
+    */templates/*
+
+    # Documentation
+    docs/*
+    *.md
+
+    # Configuration and deployment
+    deploy/*
+    scripts/*
+    config/environments/*
+
+    # Demo and utility scripts
+    demo_*.py
+    run_*.py
+    lanzador_*.py
+
+    # Logs and data
+    logs/*
+    datos/*
+    *.log
+    *.db
+
+    # Package files
+    setup.py
+    conftest.py
+
+# Plugins to enable
+plugins =
+    coverage_pyver_pragma
+
+# Concurrency support
+concurrency =
+    thread
+    multiprocessing
+
+# Context support for advanced analysis
+dynamic_contexts = test_function
+
+[report]
+# Reporting options
+show_missing = True
+skip_covered = False
+skip_empty = True
+sort = Cover
+precision = 2
+
+# Lines to exclude from coverage reporting
+exclude_lines =
+    # Have to re-enable the standard pragma
+    pragma: no cover
+
+    # Don't complain about missing debug-only code
+    def __repr__
+    if self\.debug
+    if settings\.DEBUG
+
+    # Don't complain if tests don't hit defensive assertion code
+    raise AssertionError
+    raise NotImplementedError
+
+    # Don't complain if non-runnable code isn't run
+    if 0:
+    if False:
+    if __name__ == .__main__.:
+
+    # Type checking imports
+    if TYPE_CHECKING:
+
+    # Abstract methods
+    @(abc\.)?abstractmethod
+
+    # Protocol methods (typing)
+    class .*\bProtocol\):
+
+    # Debugging and logging statements that might not be hit
+    logger\.debug
+    logging\.debug
+
+    # Version compatibility code
+    except ImportError:
+
+    # Platform-specific code
+    if sys\.platform
+
+    # Development-only code
+    if DEBUG:
+
+# Partial branches to exclude
+partial_branches =
+    pragma: no branch
+    if TYPE_CHECKING:
+
+# Ignore errors for these patterns
+ignore_errors = True
+
+[html]
+# HTML report configuration
+directory = htmlcov
+title = SenialSOLIDApp Coverage Report
+show_contexts = True
+skip_covered = False
+skip_empty = True
+
+# Extra CSS for styling
+extra_css =
+
+# Template directory
+template_dir =
+
+[xml]
+# XML report configuration (for CI/CD)
+output = coverage.xml
+package_depth = 99
+
+[json]
+# JSON report configuration
+output = coverage.json
+show_contexts = True
+pretty_print = True
+
+[lcov]
+# LCOV report configuration (for some CI tools)
+output = coverage.lcov
+
+# =============================================================================
+# PATHS CONFIGURATION FOR DIFFERENT ENVIRONMENTS
+# =============================================================================
+[paths]
+# This helps coverage.py combine data from different environments
+# Useful for CI/CD where paths might differ
+
+source =
+    .
+    /Users/*/PycharmProjects/SenialSOLIDApp
+    /app
+    /code
+    src/
+
+tests =
+    tests/
+    */tests/
+    test_*/
+
+# =============================================================================
+# QUALITY GATES CONFIGURATION (for SSA-25)
+# =============================================================================
+# These settings align with SSA-25 objectives:
+# - Code Coverage: >70% (baseline Sprint 3)
+# - Progressive improvement towards 85%
+
+# Minimum required coverage percentage
+# Set via command line: coverage report --fail-under=70
+# Or via pytest: pytest --cov-fail-under=70
+
+# Target coverage levels:
+# Sprint 3: 70% (baseline)
+# Sprint 4: 75%
+# Sprint 5: 80%
+# Sprint 6: 85%
+
+# =============================================================================
+# CONTEXT CONFIGURATION
+# =============================================================================
+[contexts]
+# Custom contexts for different test types
+django_test = tests.*
+unit_test = test_.*\.py::test_.*
+integration_test = tests.*integration.*
+functional_test = tests.*functional.*
+
+# =============================================================================
+# COVERAGE MEASUREMENT STRATEGY
+# =============================================================================
+# 1. Core Domain (dominio/*) - Target: 90%+ coverage
+# 2. Application Layer (aplicacion/*) - Target: 85%+ coverage
+# 3. Infrastructure (infraestructura/*) - Target: 70%+ coverage
+# 4. Presentation (presentacion/*) - Target: 60%+ coverage
+# 5. Configuration (config/*) - Target: 50%+ coverage
+#
+# Use coverage combine for multi-process testing
+# Use coverage erase to reset data file
+# Use coverage run --append for incremental coverage
+# =============================================================================

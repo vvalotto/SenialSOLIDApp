@@ -1,0 +1,12 @@
+SSA-24 Test Summary
+Generated: 2025-09-18 07:09:58
+System: Darwin 24.6.0
+Python: 3.12.0
+
+Total Tests: 77
+Passed: 19
+Failed: 38
+Errors: 20
+Success Rate: 24.7%
+Execution Time: 6.55s
+Status: ❌ FRAMEWORK TIENE PROBLEMAS CRÍTICOS
