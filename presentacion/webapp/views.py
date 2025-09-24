@@ -1,3 +1,38 @@
+"""Web presentation layer for SenialSOLIDApp.
+
+This module implements the web interface using Flask framework, providing both
+HTML views and REST API endpoints for signal management. Integrates comprehensive
+validation from SSA-24, error handling from SSA-26, and follows secure coding
+principles for web application development.
+
+Key Features:
+    - Web forms for signal acquisition and management
+    - REST API endpoints with validation
+    - Comprehensive error handling and user feedback
+    - Security validation and sanitization
+    - Structured logging and monitoring
+    - Bootstrap-based responsive UI
+
+Endpoints:
+    Web Views:
+        /: Homepage with navigation
+        /acerca/: About page
+        /versiones/: System version information
+        /componentes/: System component status
+        /adquisicion/: Signal acquisition interface
+        /procesamiento/: Signal processing interface
+        /visualizacion/: Signal visualization interface
+
+    API Endpoints:
+        GET /api/signals: List signals with pagination
+        POST /api/signals: Create new signal
+        GET /api/health: Health check endpoint
+
+This module is part of the presentation layer in DDD architecture and provides
+the external interface for the signal processing domain.
+"""
+
+from typing import Dict, Any, Optional, List
 from flask import Flask, render_template, flash, redirect, url_for, request, jsonify
 from flask_bootstrap import Bootstrap
 from webapp.modelos  import *
@@ -41,8 +76,33 @@ web_api_pipeline = create_api_validation_pipeline("public", rate_limit=200)
 
 
 def handle_validation_errors(f):
-    """
-    Decorator to handle SSA-24 validation errors in web routes
+    """Decorator to handle SSA-24 validation errors in web routes.
+
+    Provides centralized error handling for validation exceptions across
+    all web routes. Converts technical exceptions into user-friendly
+    messages and implements appropriate recovery strategies.
+
+    Handles the following validation error types:
+        - ValidationError: General input validation failures
+        - SecurityValidationError: Security threats and malicious input
+        - FileValidationError: File upload and processing errors
+
+    Args:
+        f: Flask route function to be wrapped with error handling
+
+    Returns:
+        function: Wrapped function with comprehensive error handling
+
+    Example:
+        @app.route('/example')
+        @handle_validation_errors
+        def example_route():
+            # Route implementation with automatic error handling
+            return render_template('example.html')
+
+    Note:
+        Logs all validation errors with structured context for monitoring.
+        Provides user feedback through Flask flash messages.
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -94,9 +154,39 @@ def handle_validation_errors(f):
     return decorated_function
 
 
-def validate_web_request():
-    """
-    Validate incoming web request for security threats
+def validate_web_request() -> Optional[Any]:
+    """Validate incoming web request for security threats.
+
+    Performs comprehensive validation of web requests using the SSA-24
+    validation framework. Checks for security threats, malicious input,
+    and enforces request limits and constraints.
+
+    Validation includes:
+        - Client IP address validation
+        - User agent analysis
+        - Request method verification
+        - Form data sanitization
+        - Rate limiting and abuse detection
+
+    Returns:
+        Optional[Any]: Validation result object or None if validation fails
+
+    Raises:
+        SecurityValidationError: When security threats are detected
+        ValidationError: When input validation fails
+
+    Example:
+        >>> result = validate_web_request()
+        >>> if result and result.is_valid:
+        ...     # Process request normally
+        ...     process_request()
+        >>> else:
+        ...     # Handle validation failure
+        ...     return error_response()
+
+    Note:
+        Automatically called by decorated routes. Manual calls should
+        handle None return values appropriately.
     """
     try:
         request_data = {
@@ -139,9 +229,37 @@ def validate_web_request():
 
 
 @auto_sanitize()
-def sanitize_form_data(form_data):
-    """
-    Sanitize form data using SSA-24 framework
+def sanitize_form_data(form_data: Dict[str, Any]) -> Dict[str, Any]:
+    """Sanitize form data using SSA-24 validation framework.
+
+    Applies automatic sanitization to all form input data to prevent
+    security vulnerabilities such as XSS, SQL injection, and other
+    malicious input attacks.
+
+    Sanitization Process:
+        1. Identify string values in form data
+        2. Apply StringInputValidator with length limits
+        3. Sanitize potentially dangerous content
+        4. Preserve non-string values unchanged
+        5. Return sanitized dictionary
+
+    Args:
+        form_data: Dictionary containing form field names and values
+
+    Returns:
+        Dict[str, Any]: Sanitized form data with safe values
+
+    Example:
+        >>> raw_form = {'name': '<script>alert("xss")</script>', 'age': 25}
+        >>> clean_form = sanitize_form_data(raw_form)
+        >>> print(clean_form['name'])
+        alert("xss")
+        >>> print(clean_form['age'])
+        25
+
+    Note:
+        Uses @auto_sanitize decorator for additional automatic processing.
+        String length limited to 1000 characters for security.
     """
     sanitized = {}
     for key, value in form_data.items():
@@ -167,8 +285,29 @@ panel_informes = PanelInformes()
 
 
 @app.errorhandler(404)
-def page_not_found(e):
-    """Handle 404 Not Found errors with user-friendly message"""
+def page_not_found(e) -> tuple:
+    """Handle 404 Not Found errors with user-friendly message.
+
+    Provides consistent error handling for missing pages with structured
+    logging and user-friendly error pages. Uses WebException for
+    standardized error context and recovery suggestions.
+
+    Args:
+        e: Flask error object containing request details
+
+    Returns:
+        tuple: (rendered template, status code) for Flask response
+
+    Example:
+        When user visits non-existent URL:
+        - Logs error with request context
+        - Shows friendly 404 page
+        - Provides navigation suggestions
+
+    Note:
+        Error details logged for monitoring and debugging.
+        Recovery suggestions help users navigate back to valid pages.
+    """
     error = WebException(
         endpoint=request.endpoint or request.path,
         http_status=404,
@@ -185,8 +324,30 @@ def page_not_found(e):
 
 
 @app.errorhandler(500)
-def internal_server_error(e):
-    """Handle 500 Internal Server Error with user-friendly message"""
+def internal_server_error(e) -> tuple:
+    """Handle 500 Internal Server Error with user-friendly message.
+
+    Provides consistent error handling for server errors with structured
+    logging and user-friendly error pages. Uses WebException for
+    standardized error context and masks technical details from users.
+
+    Args:
+        e: Flask error object containing exception details
+
+    Returns:
+        tuple: (rendered template, status code) for Flask response
+
+    Example:
+        When unhandled exception occurs:
+        - Logs full exception details for debugging
+        - Shows user-friendly error message
+        - Provides recovery suggestions
+        - Includes unique error code for support
+
+    Note:
+        Full exception details logged with stack trace for debugging.
+        User sees only safe, actionable error information.
+    ""\
     error = WebException(
         endpoint=request.endpoint or request.path,
         http_status=500,
@@ -205,30 +366,123 @@ def internal_server_error(e):
 
 
 @app.route('/')
-def inicio():
+def inicio() -> str:
+    """Render the application homepage.
+
+    Displays the main navigation page for the signal processing application
+    with links to all major features and system information.
+
+    Returns:
+        str: Rendered HTML template for homepage
+
+    Example:
+        User navigates to http://localhost:5000/
+        - Shows welcome message
+        - Displays navigation menu
+        - Provides access to all application features
+    """
     return render_template('/general/inicio.html')
 
 
 @app.route('/acerca/')
-def acerca():
+def acerca() -> str:
+    """Render the about page with application information.
+
+    Displays information about the SenialSOLIDApp including:
+    - Application purpose and features
+    - Technical architecture overview
+    - Development team information
+    - Contact and support details
+
+    Returns:
+        str: Rendered HTML template for about page
+    """
     return render_template('general/acerca.html')
 
 
 @app.route('/versiones/')
-def versiones():
+def versiones() -> str:
+    """Display system version information.
+
+    Shows detailed version information for all system components
+    including frameworks, libraries, and application modules.
+    Uses the panel_informes service to gather version data.
+
+    Returns:
+        str: Rendered HTML template with version information
+
+    Example:
+        Displays version table showing:
+        - Application version
+        - Flask framework version
+        - Python interpreter version
+        - Database version
+        - Other dependency versions
+    """
     return render_template('/aplicacion/versiones.html',
                            lista=panel_informes.informar_versiones())
 
 
 @app.route('/componentes/')
-def componentes():
+def componentes() -> str:
+    """Display system component status information.
+
+    Shows the status and health of all system components including
+    services, repositories, processors, and external dependencies.
+    Uses the panel_informes service to gather component data.
+
+    Returns:
+        str: Rendered HTML template with component status
+
+    Example:
+        Displays component table showing:
+        - Database connection status
+        - Repository service status
+        - Validation framework status
+        - Logging system status
+        - External service connectivity
+    """
     return render_template('/aplicacion/componentes.html',
                            lista=panel_informes.informar_componentes())
 
 
 @app.route("/adquisicion/", methods=['GET', 'POST'])
 @handle_validation_errors
-def adquisicion():
+def adquisicion() -> str:
+    """Handle signal acquisition through web interface.
+
+    Provides both GET (form display) and POST (form processing) handling
+    for signal acquisition operations. Integrates comprehensive validation
+    from SSA-24 and error handling from SSA-26.
+
+    GET Request:
+        - Displays signal acquisition form
+        - Shows list of previously acquired signals
+        - Applies security validation to request
+
+    POST Request:
+        - Validates and sanitizes form data
+        - Processes signal acquisition through domain services
+        - Provides user feedback on success/failure
+        - Implements comprehensive error handling
+
+    Returns:
+        str: Rendered HTML template or redirect response
+
+    Raises:
+        ValidationException: When form validation fails
+        AcquisitionException: When signal acquisition fails
+        RepositoryException: When signal persistence fails
+        WebException: When unexpected web errors occur
+
+    Example:
+        GET /adquisicion/ - Shows acquisition form
+        POST /adquisicion/ - Processes signal acquisition with validation
+
+    Note:
+        Uses SSA-24 validation framework for security and data validation.
+        All errors are logged with structured context for monitoring.
+    """
     # Validate web request for security
     validation_result = validate_web_request()
 
@@ -306,12 +560,36 @@ def adquisicion():
                          seniales=AccionSenial.listar_seniales_adquiridas())
 
 @app.route("/procesamiento/")
-def procesamiento():
+def procesamiento() -> str:
+    """Display signal processing interface.
+
+    Provides access to signal processing capabilities including
+    filtering, transformation, and analysis operations.
+
+    Returns:
+        str: Rendered HTML template for processing interface
+
+    Note:
+        Currently displays interface template. Processing logic
+        can be added similar to acquisition endpoint.
+    """
     return render_template('aplicacion/procesamiento.html')
 
 
 @app.route("/visualizacion/")
-def visualizacion():
+def visualizacion() -> str:
+    """Display signal visualization interface.
+
+    Provides access to signal visualization capabilities including
+    time-domain plots, frequency analysis, and statistical views.
+
+    Returns:
+        str: Rendered HTML template for visualization interface
+
+    Note:
+        Currently displays interface template. Visualization logic
+        can be added with charting libraries and signal display.
+    """
     return render_template('aplicacion/visualizacion.html')
 
 
@@ -322,9 +600,48 @@ def visualizacion():
     limit=StringInputValidator(max_length=10, allowed_pattern=r'^\d+$'),
     offset=StringInputValidator(max_length=10, allowed_pattern=r'^\d+$')
 )
-def api_list_signals(limit="10", offset="0"):
-    """
-    API endpoint to list signals with validation
+def api_list_signals(limit: str = "10", offset: str = "0") -> tuple:
+    """REST API endpoint to list signals with pagination and validation.
+
+    Provides paginated access to acquired signals through RESTful API.
+    Implements comprehensive validation, security checks, and structured
+    error handling with JSON responses.
+
+    Query Parameters:
+        limit (str): Maximum number of signals to return (1-100, default: 10)
+        offset (str): Number of signals to skip for pagination (default: 0)
+
+    Returns:
+        tuple: (JSON response, HTTP status code)
+
+    Response Format:
+        {
+            "signals": [
+                {
+                    "id": "signal_identifier",
+                    "description": "signal_description",
+                    "date": "acquisition_date",
+                    "frequency": "signal_frequency",
+                    "amplitude": "signal_amplitude"
+                }
+            ],
+            "total": total_count,
+            "limit": applied_limit,
+            "offset": applied_offset,
+            "has_more": boolean
+        }
+
+    Raises:
+        ValidationError: When parameters are invalid or out of range
+        WebException: When unexpected errors occur during processing
+
+    Example:
+        GET /api/signals?limit=5&offset=10
+        Returns 5 signals starting from the 11th signal
+
+    Note:
+        Validates limit (1-100) and offset (≥0) parameters for security.
+        All requests logged with client IP and parameters for monitoring.
     """
     # Validate request
     validation_result = validate_web_request()
@@ -387,9 +704,56 @@ def api_list_signals(limit="10", offset="0"):
 
 @app.route("/api/signals", methods=['POST'])
 @handle_validation_errors
-def api_create_signal():
-    """
-    API endpoint to create signals with JSON validation
+def api_create_signal() -> tuple:
+    """REST API endpoint to create new signals with JSON validation.
+
+    Accepts JSON payloads for creating new signal entities through the API.
+    Implements comprehensive validation, sanitization, and error handling
+    with structured JSON responses.
+
+    Request Format:
+        Content-Type: application/json
+        {
+            "identificador": "unique_signal_id",
+            "descripcion": "signal_description",
+            "fecha": "acquisition_date",
+            "frecuencia": "signal_frequency",
+            "amplitud": "signal_amplitude"
+        }
+
+    Returns:
+        tuple: (JSON response, HTTP status code)
+            - 201: Signal created successfully
+            - 400: Validation errors in request data
+            - 500: Internal server error
+
+    Success Response (201):
+        {
+            "status": "success",
+            "message": "Signal created successfully",
+            "signal": {...created_signal_data...}
+        }
+
+    Error Response (400):
+        {
+            "error": "Validation failed",
+            "validation_errors": [{"field": "error_message"}],
+            "error_code": "API_VALIDATION_ERROR"
+        }
+
+    Raises:
+        APIValidationError: When Content-Type is not application/json
+        ValidationException: When domain validation fails
+        WebException: When unexpected errors occur
+
+    Example:
+        POST /api/signals
+        Content-Type: application/json
+        {"identificador": "SIG_001", "descripcion": "Test signal"}
+
+    Note:
+        Uses form validation for consistency with web interface.
+        All creation attempts logged with client context.
     """
     # Validate request
     validation_result = validate_web_request()
@@ -487,9 +851,36 @@ def api_create_signal():
 
 @app.route("/api/health", methods=['GET'])
 @handle_validation_errors
-def api_health():
-    """
-    Health check endpoint with basic validation
+def api_health() -> tuple:
+    """REST API health check endpoint for system monitoring.
+
+    Provides system health status information for monitoring and
+    load balancer health checks. Returns JSON with system status,
+    component health, and validation framework status.
+
+    Returns:
+        tuple: (JSON response, HTTP status code) - Always returns 200
+
+    Response Format:
+        {
+            "status": "healthy",
+            "timestamp": "2025-09-24T10:30:00.000Z",
+            "version": "1.0.0",
+            "validation_framework": "SSA-24",
+            "components": {
+                "database": "connected",
+                "validation": "active",
+                "logging": "active"
+            }
+        }
+
+    Example:
+        GET /api/health
+        Used by monitoring systems and load balancers
+
+    Note:
+        Lightweight endpoint for frequent health checks.
+        Does not perform deep system validation to avoid performance impact.
     """
     validation_result = validate_web_request()
 
@@ -510,9 +901,33 @@ def api_health():
 
 # Global before_request handler for additional security
 @app.before_request
-def before_request():
-    """
-    Global request validation and security checks
+def before_request() -> Optional[tuple]:
+    """Global request validation and security checks for all requests.
+
+    Executed before every request to perform security validation,
+    logging, and request size limits. Provides centralized security
+    enforcement across the entire application.
+
+    Security Checks:
+        - Request size validation (10MB limit)
+        - Static file bypass for performance
+        - Comprehensive request logging
+        - Rate limiting preparation
+        - User agent validation
+
+    Returns:
+        Optional[tuple]: Error response tuple if request is rejected,
+                        None to continue normal request processing
+
+    Example:
+        Automatically called for every request:
+        - Logs request details for monitoring
+        - Blocks oversized requests (>10MB)
+        - Prepares context for route handlers
+
+    Note:
+        Balances security with performance by skipping validation
+        for static files. Request logging limited to prevent log flooding.
     """
     # Skip validation for static files
     if request.endpoint and request.endpoint.startswith('static'):

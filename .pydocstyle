@@ -1,0 +1,63 @@
+# SSA-27: pydocstyle configuration for documentation linting
+# Documentation standards enforcement for SenialSOLIDApp
+
+[pydocstyle]
+# Use Google docstring convention
+convention = google
+
+# Additional ignores for DDD patterns and project-specific needs
+add-ignore =
+    # D100: Missing docstring in public module
+    D100,
+    # D104: Missing docstring in public package
+    D104,
+    # D213: Multi-line docstring summary should start at the second line (conflicts with Google style)
+    D213,
+    # D203: 1 blank line required before class docstring (conflicts with Google style)
+    D203,
+    # D212: Multi-line docstring summary should start at the first line
+    D212
+
+# Match directories (exclude tests and build directories)
+match-dir = (?!tests|build|docs/_build|venv|\.git).*
+
+# Match files (exclude test files and temporary files)
+match = (?!test_|conftest|__pycache__).*\.py$
+
+# Ignore specific patterns for legacy code during migration
+ignore-decorators =
+    # Skip validation decorators that might have complex signatures
+    @validation_decorator,
+    @sanitization_decorator,
+    # Skip property decorators for simple getters/setters
+    @property,
+    @.+\.setter
+
+# Error codes explanation for SSA-27:
+# We enforce Google style docstrings with business context
+#
+# Key enforced rules:
+# - D101: Missing docstring in public class
+# - D102: Missing docstring in public method
+# - D103: Missing docstring in public function
+# - D105: Missing docstring in magic method
+# - D106: Missing docstring in public nested class
+# - D107: Missing docstring in __init__
+# - D200-D215: Docstring formatting rules
+# - D300-D418: Content and style rules
+#
+# Ignored for project compatibility:
+# - D100: Module docstrings (many legacy modules)
+# - D104: Package docstrings (many __init__.py files)
+# - D203/D213: Google style formatting conflicts
+# - D212: Conflicts with our preferred Google style
+
+# Additional configuration for SSA-27 documentation standards
+[tool:pydocstyle]
+# Enable all style checks except those explicitly ignored
+select = D1,D2,D3,D4
+
+# Custom error messages for business context
+explain = True
+source = True
+verbose = 2
