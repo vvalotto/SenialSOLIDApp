@@ -62,38 +62,80 @@ quality_gates:
     severity: "MINOR"
     description: "Percentage of code with type annotations"
 
+  # Gate 6: Documentation Coverage (SSA-27)
+  docstring_coverage:
+    metric: "pydocstyle"
+    threshold: 90.0
+    baseline: 15.0  # Pre-SSA-27 baseline
+    current_target: 90.0  # Post-SSA-27 target
+    operator: ">="
+    severity: "MAJOR"
+    description: "Percentage of code with Google Style docstrings"
+
+  # Gate 7: Documentation Quality (SSA-27)
+  documentation_lint_score:
+    metric: "pydocstyle_quality"
+    threshold: 9.0
+    baseline: 0.0  # Not measured yet
+    current_target: 9.0  # SSA-27 target
+    operator: ">="
+    severity: "MAJOR"
+    description: "Documentation linting quality score"
+
+  # Gate 8: API Documentation (SSA-27)
+  api_documentation:
+    metric: "sphinx_build"
+    threshold: 100.0
+    baseline: 0.0  # Not generated yet
+    current_target: 100.0  # SSA-27 target
+    operator: ">="
+    severity: "CRITICAL"
+    description: "API documentation generation success rate"
+
 # =============================================================================
 # PROGRESSIVE THRESHOLDS BY SPRINT
 # =============================================================================
 
 sprint_targets:
-  sprint_3:  # Current Sprint - Baseline establishment
+  sprint_3:  # Current Sprint - Baseline establishment + SSA-27
     pylint_score: 7.5
     code_coverage: 70.0
     max_complexity: 15
     maintainability_index: 50.0
     type_coverage: 25.0
+    docstring_coverage: 90.0  # SSA-27 target
+    documentation_lint_score: 9.0  # SSA-27 target
+    api_documentation: 100.0  # SSA-27 target
 
-  sprint_4:  # Quality gates active
+  sprint_4:  # Quality gates active + Documentation maintenance
     pylint_score: 8.0
     code_coverage: 75.0
     max_complexity: 12
     maintainability_index: 55.0
     type_coverage: 40.0
+    docstring_coverage: 92.0
+    documentation_lint_score: 9.2
+    api_documentation: 100.0
 
-  sprint_5:  # Quality improvement
+  sprint_5:  # Quality improvement + Documentation excellence
     pylint_score: 8.5
     code_coverage: 80.0
     max_complexity: 10
     maintainability_index: 60.0
     type_coverage: 60.0
+    docstring_coverage: 95.0
+    documentation_lint_score: 9.5
+    api_documentation: 100.0
 
-  sprint_6:  # Quality excellence
+  sprint_6:  # Quality excellence + Documentation mastery
     pylint_score: 9.0
     code_coverage: 85.0
     max_complexity: 8
     maintainability_index: 65.0
     type_coverage: 80.0
+    docstring_coverage: 98.0
+    documentation_lint_score: 9.8
+    api_documentation: 100.0
 
 # =============================================================================
 # CRITICAL FILES AND MODULES
@@ -109,15 +151,18 @@ critical_modules:
     pylint_threshold: 8.5
     coverage_threshold: 90.0
     complexity_threshold: 8
+    docstring_coverage_threshold: 95.0  # SSA-27
 
   # Application layer - high quality standards
   application:
     paths:
       - "aplicacion/validation/"
       - "aplicacion/patterns/"
+      - "aplicacion/managers/"
     pylint_threshold: 8.0
     coverage_threshold: 85.0
     complexity_threshold: 10
+    docstring_coverage_threshold: 90.0  # SSA-27
 
   # Infrastructure layer - moderate standards
   infrastructure:
@@ -126,6 +171,7 @@ critical_modules:
     pylint_threshold: 7.5
     coverage_threshold: 75.0
     complexity_threshold: 12
+    docstring_coverage_threshold: 80.0  # SSA-27
 
   # Presentation layer - basic standards
   presentation:
@@ -134,6 +180,7 @@ critical_modules:
     pylint_threshold: 7.0
     coverage_threshold: 65.0
     complexity_threshold: 15
+    docstring_coverage_threshold: 70.0  # SSA-27
 
 # =============================================================================
 # EXCLUSIONS AND EXCEPTIONS
@@ -173,10 +220,13 @@ enforcement:
   # CRITICAL: Must be fixed within sprint
   CRITICAL:
     - max_complexity
+    - api_documentation  # SSA-27
 
   # MAJOR: Must be addressed in next sprint
   MAJOR:
     - maintainability_index
+    - docstring_coverage  # SSA-27
+    - documentation_lint_score  # SSA-27
 
   # MINOR: Should be improved gradually
   MINOR:
@@ -196,6 +246,9 @@ reporting:
       - max_complexity
       - maintainability_index
       - type_coverage
+      - docstring_coverage  # SSA-27
+      - documentation_lint_score  # SSA-27
+      - api_documentation  # SSA-27
 
   notifications:
     slack_webhook: null  # To be configured
@@ -219,6 +272,7 @@ automation:
       - mypy
       - black
       - isort
+      - pydocstyle  # SSA-27
 
   ci_cd:
     enabled: false  # To be enabled in Sprint 4
@@ -226,6 +280,8 @@ automation:
       - quality_check
       - coverage_report
       - complexity_analysis
+      - documentation_check  # SSA-27
+      - api_docs_generation  # SSA-27
 
   auto_fix:
     enabled: true
@@ -284,9 +340,14 @@ custom_metrics:
     severity: "BLOCKER"
 
   documentation_coverage:
-    description: "Percentage of code with documentation"
-    threshold: 60.0
-    severity: "MINOR"
+    description: "Percentage of code with Google Style docstrings (SSA-27)"
+    threshold: 90.0
+    severity: "MAJOR"
+
+  api_docs_completeness:
+    description: "API documentation generation completeness (SSA-27)"
+    threshold: 100.0
+    severity: "CRITICAL"
 
 # =============================================================================
 # CONFIGURATION VALIDATION
@@ -301,6 +362,8 @@ validation:
     - coverage
     - black
     - isort
+    - pydocstyle  # SSA-27
+    - sphinx  # SSA-27
 
   config_files:
     - .pylintrc
@@ -308,6 +371,8 @@ validation:
     - mypy.ini
     - .coveragerc
     - .radon.cfg
+    - .pydocstyle  # SSA-27
+    - docs/sphinx/conf.py  # SSA-27
 
   minimum_python_version: "3.11"
 
